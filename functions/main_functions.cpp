@@ -1,4 +1,5 @@
 #include "main_functions.h"
+#include "../classes/Bitcoin.h"
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -51,22 +52,28 @@ bool close_file(FILE *fp) {
 }
 
 
-void wallet_parse(char *line) {
+void wallet_parse(char *line, int bitcoin_value) {
 
     char *token;
-    char delim[] = " \n";
+    char delim[] = " \n\t";
     token = strtok(line, delim);
-    while (token != NULL) {
-        cout<<token<<endl;
-        token = strtok(NULL, delim);
+    if (token == NULL) {
+        cout<<"Error in wallet parsing. No walletId given. Now exiting"<<endl;
+        exit(1);
     }
-    // TODO add wallet functionality
+    while (token != NULL) {
+        Bitcoin *bitcoin = new Bitcoin(token, bitcoin_value, bitcoin_value);
+        token = strtok(NULL, delim);
+        bitcoin->print();
+        delete bitcoin;
+    }
+    // TODO (1) seperate walletId from bitcoinIds(first strtok), (2) create a wallet instead of just bitcoins
 }
 
 void transaction_parse(char *line) {
 
     char *token;
-    char delim[] = " \n";
+    char delim[] = " \n\t";
     token = strtok(line, delim);
     for (int i = 0; i < 4; i++) { // First 4 arguments are necessary. The 5th (date) might be missing
         if (token == NULL) {

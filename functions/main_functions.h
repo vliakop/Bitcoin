@@ -8,6 +8,6 @@ FILE* open_file(char *filename);
 
 bool close_file(FILE *fp);
 
-void wallet_parse(char *line);
+void wallet_parse(char *line, int bitcoin_value);
 
 void transaction_parse(char *line);
