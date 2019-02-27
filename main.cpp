@@ -1,6 +1,9 @@
 #include <iostream>
+#include <cstring>
 #include "./functions/main_functions.h"
+#include "classes/Lists/StringList.h"
 
+using namespace std;
 int main(int argc, char *argv[]) {
 
     // TODO change static bitcoins, transactions strings to char *
@@ -23,5 +26,21 @@ int main(int argc, char *argv[]) {
     }
     close_file(fp);
 
+    StringList *mumbo = new StringList();
+    char word[512];
+    int a = 1;
+    while(strcmp(word, "alexiou") != 0) {
+        cout<<"Please give a string"<<endl;
+        cin>>word;
+        mumbo->add(word);
+        if (mumbo->contains("zouros")) {
+            cout<<"zouros is in!"<<endl;
+        } else {
+            cout<<"zouros is missing"<<endl;
+        }
+        a += 0;
+    }
+    mumbo->print();
+    delete mumbo;
     return 0;
 }
