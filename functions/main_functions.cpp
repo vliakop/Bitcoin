@@ -36,3 +36,48 @@ void init_arguments(int argc, char *argv[], char *bitcoins, char *transactions, 
     cout<<bitcoins<<endl<<transactions<<endl<<*bitcoin_value<<endl<<*sender_entries<<endl<<*receiver_entries<<endl<<*bucket_size<<endl;
 }
 
+FILE* open_file(char *filename) {
+
+    FILE *fp = fopen(filename, "r");
+    if (fp == NULL) {
+        cout<<"Cannot open file '"<<filename<<"'"<<endl;
+    }
+    return fp;
+}
+
+
+bool close_file(FILE *fp) {
+    fclose(fp);
+}
+
+
+void wallet_parse(char *line) {
+
+    char *token;
+    char delim[] = " \n";
+    token = strtok(line, delim);
+    while (token != NULL) {
+        cout<<token<<endl;
+        token = strtok(NULL, delim);
+    }
+    // TODO add wallet functionality
+}
+
+void transaction_parse(char *line) {
+
+    char *token;
+    char delim[] = " \n";
+    token = strtok(line, delim);
+    for (int i = 0; i < 4; i++) { // First 4 arguments are necessary. The 5th (date) might be missing
+        if (token == NULL) {
+            cout<<"Transaction parsing error"<<endl;
+            exit(1);
+        }
+        cout<<token<<endl;
+        token = strtok(NULL, delim);
+    }
+    if (token == NULL) {
+        // TODO date stuff
+    }
+    // TODO add transaction functionality
+}
