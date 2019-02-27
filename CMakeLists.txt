@@ -3,4 +3,4 @@ project(Cryptocurrency)
 
 set(CMAKE_CXX_STANDARD 98)
 
-add_executable(Cryptocurrency main.cpp functions/main_functions.h functions/main_functions.cpp)
+add_executable(Cryptocurrency main.cpp functions/main_functions.h functions/main_functions.cpp classes/Bitcoin.cpp classes/Bitcoin.h)
