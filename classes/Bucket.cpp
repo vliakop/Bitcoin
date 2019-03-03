@@ -21,14 +21,13 @@ Bucket::~Bucket() {
     }
 }
 
-bool Bucket::addRecord(Wallet *record) {
+void Bucket::addRecord(Wallet *record) {
 
     if (records == record_capacity) {
-        return false;
+        return;
     }
     memcpy(array + records*record_size, &record, sizeof(Wallet*));
     records += 1;
-    return true;
 }
 
 void Bucket::print() {
@@ -39,4 +38,24 @@ void Bucket::print() {
         memcpy(&w, array + i*record_size, sizeof(Wallet*));
         w->print();
     }
+}
+
+bool Bucket::isFull() {
+
+    if (records == record_capacity) {
+        return  true;
+    }
+    return false;
+}
+
+bool Bucket::contains(char *walletID) {
+
+    Wallet *w;
+    for (int i = 0; i < records; i++) {
+        memcpy(&w, array + i*record_size, sizeof(Wallet*));
+        if (w->hasID(walletID)) {
+            return true;
+        }
+    }
+    return false;
 }

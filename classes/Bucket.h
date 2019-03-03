@@ -20,9 +20,13 @@ public:
 
     ~Bucket();
 
-    bool addRecord(Wallet *record);
+    void addRecord(Wallet *record);
 
     void print();
+
+    bool isFull();
+
+    bool contains(char *walletID);
 
 };
 

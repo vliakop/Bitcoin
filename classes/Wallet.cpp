@@ -52,3 +52,11 @@ void Wallet::print() {
     bitcoin_list->print();
     cout<<endl;
 }
+
+bool Wallet::hasID(char *walletID) {
+
+    if (strcmp(walletID, this->walletID) == 0) {
+        return true;
+    }
+    return false;
+}

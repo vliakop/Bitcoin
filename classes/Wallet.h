@@ -33,5 +33,7 @@ public:
 
     void print();
 
+    bool hasID(char *walletID);
+
 };
 
