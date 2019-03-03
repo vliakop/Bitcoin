@@ -1,5 +1,6 @@
 #include "main_functions.h"
 #include "../classes/Bitcoin.h"
+#include "../classes/Wallet.h"
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -42,6 +43,7 @@ FILE* open_file(char *filename) {
     FILE *fp = fopen(filename, "r");
     if (fp == NULL) {
         cout<<"Cannot open file '"<<filename<<"'"<<endl;
+        exit(1);
     }
     return fp;
 }
@@ -55,25 +57,28 @@ bool close_file(FILE *fp) {
 void wallet_parse(char *line, int bitcoin_value) {
 
     char *token;
-    char delim[] = " \n\t";
+    char delim[] = " \n\r\t";
+
     token = strtok(line, delim);
     if (token == NULL) {
         cout<<"Error in wallet parsing. No walletId given. Now exiting"<<endl;
         exit(1);
     }
+    Wallet *wallet = new Wallet(token);
+    token = strtok(NULL, delim);
     while (token != NULL) {
-        Bitcoin *bitcoin = new Bitcoin(token, bitcoin_value, bitcoin_value);
+        wallet->addBitcoin(token, 100, 100);
         token = strtok(NULL, delim);
-        bitcoin->print();
-        delete bitcoin;
     }
-    // TODO (1) seperate walletId from bitcoinIds(first strtok), (2) create a wallet instead of just bitcoins
+    wallet->print();
+    delete wallet;
+    // TODO (1) wallet->addBitcoin: replace 100, 100 with value and denomination,
 }
 
 void transaction_parse(char *line) {
 
     char *token;
-    char delim[] = " \n\t";
+    char delim[] = " \n\t\r";
     token = strtok(line, delim);
     for (int i = 0; i < 4; i++) { // First 4 arguments are necessary. The 5th (date) might be missing
         if (token == NULL) {
