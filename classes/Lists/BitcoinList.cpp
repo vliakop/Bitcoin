@@ -57,7 +57,6 @@ bool BitcoinList::add(char *bitcoin_id, int bitcoin_value, int denomination) {
 
     if (size == 0) {
         head = tail = new BitcoinList::BitcoinNode(bitcoin_id, bitcoin_value, denomination);
-        size += 1;
     } else {
         BitcoinList::BitcoinNode *n = new BitcoinList::BitcoinNode(bitcoin_id, bitcoin_value, denomination);
         tail->next = n;
@@ -65,4 +64,15 @@ bool BitcoinList::add(char *bitcoin_id, int bitcoin_value, int denomination) {
     }
     size += 1;
     return true;
+}
+
+void BitcoinList::print() {
+
+    int i = size;
+    BitcoinNode *n = head;
+    while (size > 0) {
+        n->bitcoin->print();
+        n = n->next;
+        size--;
+    }
 }

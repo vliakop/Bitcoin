@@ -40,6 +40,8 @@ public:
 
     bool add(char *bitcoin_id, int bitcoin_value, int denomination);
 
+    void print();
+
 //    Bitcoin* removeFromStart();
 //
 //    Bitcoin* removeFromEnd();
