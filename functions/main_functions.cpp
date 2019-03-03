@@ -2,6 +2,7 @@
 #include "../classes/Bitcoin.h"
 #include "../classes/Wallet.h"
 #include "../classes/HashTable.h"
+#include "../classes/Transaction.h"
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -101,18 +102,37 @@ void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable) {
 
 
 void transaction_parse(char *line) {
+    // TODO if token != NULL se ka8e strtok
+    char id[15];
+    char sender[50];
+    char receiver[50];
+    int value;
 
     char *token;
     char delim[] = " \n\t\r";
-    token = strtok(line, delim);
-    for (int i = 0; i < 4; i++) { // First 4 arguments are necessary. The 5th (date) might be missing
-        if (token == NULL) {
-            cout<<"Transaction parsing error"<<endl;
-            exit(1);
-        }
-        cout<<token<<endl;
-        token = strtok(NULL, delim);
+
+    token = strtok(line, delim);    // id
+    strcpy(id, token);
+
+    token = strtok(NULL, delim);
+    strcpy(sender, token);
+
+    token = strtok(NULL, delim);
+    strcpy(receiver, token);
+
+    token = strtok(NULL, delim);
+    value = atoi(token);
+    if (value < 0) {
+        cout<<"Invalid value of bitcoin transfer"<<endl;
+        exit(1);
     }
+
+    token = strtok(NULL, "\n\r");
+    cout<<"Date is '"<<token<<"'"<<endl;
+
+    Transaction *trans = new Transaction(id, sender, receiver, value, token);
+    trans->print();
+
     if (token == NULL) {
         // TODO date stuff
     }

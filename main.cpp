@@ -18,19 +18,19 @@ int main(int argc, char *argv[]) {
     FILE *fp = open_file(bitcoins);
     char buf[512];
 
-    while (fgets(buf, 512, fp) != NULL) {
-        wallet_parse(buf, bitcoin_value, hashTable);
-    }
-
-    close_file(fp);
-    hashTable->print();
-    delete hashTable;
-
-//    fp = open_file(transactions);
 //    while (fgets(buf, 512, fp) != NULL) {
-//        transaction_parse(buf);
+//        wallet_parse(buf, bitcoin_value, hashTable);
 //    }
+//
 //    close_file(fp);
+//    hashTable->print();
+//    delete hashTable;
+
+    fp = open_file(transactions);
+    while (fgets(buf, 512, fp) != NULL) {
+        transaction_parse(buf);
+    }
+    close_file(fp);
 //
 //    StringList *mumbo = new StringList();
 //    char word[512];
