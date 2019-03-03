@@ -13,40 +13,24 @@ int main(int argc, char *argv[]) {
     int bitcoin_value = 100, sender_entries, receiver_entries, bucket_size;
 //    init_arguments(argc, argv, bitcoins, transactions, &bitcoin_value, &sender_entries, &receiver_entries, &bucket_size);
 
-//    Bucket *bucket = new Bucket(2000, sizeof(Wallet));
-    HashTable *hashTable = new HashTable();
+    HashTable *wallets = new HashTable();
+    StringList *coins = new StringList();
     FILE *fp = open_file(bitcoins);
     char buf[512];
 
-//    while (fgets(buf, 512, fp) != NULL) {
-//        wallet_parse(buf, bitcoin_value, hashTable);
-//    }
-//
-//    close_file(fp);
-//    hashTable->print();
-//    delete hashTable;
+    while (fgets(buf, 512, fp) != NULL) {
+        wallet_parse(buf, bitcoin_value, wallets, coins);
+    }
+
+    close_file(fp);
+    wallets->print();
+    delete wallets;
 
     fp = open_file(transactions);
     while (fgets(buf, 512, fp) != NULL) {
         transaction_parse(buf);
     }
     close_file(fp);
-//
-//    StringList *mumbo = new StringList();
-//    char word[512];
-//    int a = 1;
-//    while(strcmp(word, "alexiou") != 0) {
-//        cout<<"Please give a string"<<endl;
-//        cin>>word;
-//        mumbo->add(word);
-//        if (mumbo->contains("zouros")) {
-//            cout<<"zouros is in!"<<endl;
-//        } else {
-//            cout<<"zouros is missing"<<endl;
-//        }
-//        a += 0;
-//    }
-//    mumbo->print();
-//    delete mumbo;
+
     return 0;
 }

@@ -3,6 +3,7 @@
 #include "../classes/Wallet.h"
 #include "../classes/HashTable.h"
 #include "../classes/Transaction.h"
+#include "../classes/Lists/StringList.h"
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -69,6 +70,7 @@ void wallet_parse(char *line, int bitcoin_value, Bucket *bucket) {
     Wallet *wallet = new Wallet(token);
     token = strtok(NULL, delim);
     while (token != NULL) {
+
         wallet->addBitcoin(token, 100, 100);
         token = strtok(NULL, delim);
     }
@@ -78,7 +80,7 @@ void wallet_parse(char *line, int bitcoin_value, Bucket *bucket) {
     // TODO (1) wallet->addBitcoin: replace 100, 100 with value and denomination,
 }
 
-void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable) {
+void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringList *bitcoinIDs) {
 
     char *token;
     char delim[] = " \n\r\t";
@@ -90,14 +92,18 @@ void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable) {
     }
     Wallet *wallet = new Wallet(token);
     token = strtok(NULL, delim);
-    while (token != NULL) {
-        wallet->addBitcoin(token, 100, 100);
+    while (token != NULL) { // Extract all bitcoin ids
+        if (bitcoinIDs->contains(token) == false) {
+            wallet->addBitcoin(token, bitcoin_value, bitcoin_value);
+            bitcoinIDs->add(token);
+        } else {
+            cout<<"Bitcoin with id '"<<token<<"' already exists. Now exiting"<<endl;
+            exit(1);
+        }
         token = strtok(NULL, delim);
     }
     hashTable->add(wallet);
-//    wallet->print();
-//    delete wallet; TODO PROSOXI: an den ginoun edo delete, prepei na ta kanei delete sto Bucket
-    // TODO (1) wallet->addBitcoin: replace 100, 100 with value and denomination,
+    // TODO PROSOXI: an den ginoun edo delete, prepei na ta kanei delete sto Bucket
 }
 
 

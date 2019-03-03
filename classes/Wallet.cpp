@@ -44,6 +44,7 @@ void Wallet::setBitcoin_list(BitcoinList *bitcoin_list) {
 void Wallet::addBitcoin(char *bitcoin_id, int value, int denomination) {
 
     bitcoin_list->add(bitcoin_id, value, denomination);
+    balance += denomination;
 }
 
 void Wallet::print() {
