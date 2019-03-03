@@ -2,6 +2,7 @@
 #include <cstring>
 #include "./functions/main_functions.h"
 #include "classes/Lists/StringList.h"
+#include "classes/Bucket.h"
 
 using namespace std;
 int main(int argc, char *argv[]) {
@@ -12,36 +13,39 @@ int main(int argc, char *argv[]) {
     int bitcoin_value = 100, sender_entries, receiver_entries, bucket_size;
 //    init_arguments(argc, argv, bitcoins, transactions, &bitcoin_value, &sender_entries, &receiver_entries, &bucket_size);
 
+    Bucket *bucket = new Bucket(2000, sizeof(Wallet));
     FILE *fp = open_file(bitcoins);
     char buf[512];
 
     while (fgets(buf, 512, fp) != NULL) {
-        wallet_parse(buf, bitcoin_value);
+        wallet_parse(buf, bitcoin_value, bucket);
     }
 
     close_file(fp);
+    bucket->print();
+    delete bucket;
 
-    fp = open_file(transactions);
-    while (fgets(buf, 512, fp) != NULL) {
-        transaction_parse(buf);
-    }
-    close_file(fp);
-
-    StringList *mumbo = new StringList();
-    char word[512];
-    int a = 1;
-    while(strcmp(word, "alexiou") != 0) {
-        cout<<"Please give a string"<<endl;
-        cin>>word;
-        mumbo->add(word);
-        if (mumbo->contains("zouros")) {
-            cout<<"zouros is in!"<<endl;
-        } else {
-            cout<<"zouros is missing"<<endl;
-        }
-        a += 0;
-    }
-    mumbo->print();
-    delete mumbo;
+//    fp = open_file(transactions);
+//    while (fgets(buf, 512, fp) != NULL) {
+//        transaction_parse(buf);
+//    }
+//    close_file(fp);
+//
+//    StringList *mumbo = new StringList();
+//    char word[512];
+//    int a = 1;
+//    while(strcmp(word, "alexiou") != 0) {
+//        cout<<"Please give a string"<<endl;
+//        cin>>word;
+//        mumbo->add(word);
+//        if (mumbo->contains("zouros")) {
+//            cout<<"zouros is in!"<<endl;
+//        } else {
+//            cout<<"zouros is missing"<<endl;
+//        }
+//        a += 0;
+//    }
+//    mumbo->print();
+//    delete mumbo;
     return 0;
 }

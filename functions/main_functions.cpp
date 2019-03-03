@@ -54,7 +54,7 @@ bool close_file(FILE *fp) {
 }
 
 
-void wallet_parse(char *line, int bitcoin_value) {
+void wallet_parse(char *line, int bitcoin_value, Bucket *bucket) {
 
     char *token;
     char delim[] = " \n\r\t";
@@ -70,8 +70,9 @@ void wallet_parse(char *line, int bitcoin_value) {
         wallet->addBitcoin(token, 100, 100);
         token = strtok(NULL, delim);
     }
+    bucket->addRecord(wallet);
     wallet->print();
-    delete wallet;
+//    delete wallet; TODO PROSOXI: an den ginoun edo delete, prepei na ta kanei delete sto Bucket
     // TODO (1) wallet->addBitcoin: replace 100, 100 with value and denomination,
 }
 
