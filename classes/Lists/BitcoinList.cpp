@@ -26,6 +26,7 @@ BitcoinList::~BitcoinList() {
         head = head->next;
         delete n;
         n = head;
+        size--;
     }
 }
 
@@ -70,9 +71,9 @@ void BitcoinList::print() {
 
     int i = size;
     BitcoinNode *n = head;
-    while (size > 0) {
+    while (i > 0) {
         n->bitcoin->print();
         n = n->next;
-        size--;
+        i--;
     }
 }
