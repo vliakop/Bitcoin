@@ -17,7 +17,7 @@ public:
 
     ~Wallet();
 
-    const char *getWalletID() const;
+    char *getWalletID() ;
 
     void setWalletID(char *walletID);
 

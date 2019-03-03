@@ -17,7 +17,7 @@ Wallet::~Wallet() {
     delete bitcoin_list;
 }
 
-const char *Wallet::getWalletID() const {
+char *Wallet::getWalletID()  {
     return walletID;
 }
 

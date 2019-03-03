@@ -39,6 +39,8 @@ public:
 
     void addWallet(Wallet *wallet);
 
-    // TODO  if needed bool contains(char * walletID);
+    bool contains(char * walletID);
+
+    void print();
 };
 

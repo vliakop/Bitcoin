@@ -66,7 +66,33 @@ void BucketList::addWallet(Wallet *wallet) {
             tail = n;   // Kane ton kainourio teleutaio
             size += 1;
         }
-        tail->bucket->addRecord(wallet);    // Bale to wallet sto Bucket
+    }
+    tail->bucket->addRecord(wallet);    // Bale to wallet sto Bucket
+}
+
+bool BucketList::contains(char *walletID) {
+
+    if (size == 0) {
+        return false;
+    }
+    bool contain = false;
+    BucketNode *n = head;
+    while (n != NULL) {
+        if (n->bucket->contains(walletID)) {
+            contain = true;
+            break;
+        }
+        n = n->next;
+    }
+    return contain;
+}
+
+void BucketList::print() {
+
+    BucketNode *n = head;
+    while (n != NULL) {
+        n->bucket->print();
+        n = n->next;
     }
 
 }

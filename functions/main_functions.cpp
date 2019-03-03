@@ -1,6 +1,7 @@
 #include "main_functions.h"
 #include "../classes/Bitcoin.h"
 #include "../classes/Wallet.h"
+#include "../classes/HashTable.h"
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -75,6 +76,29 @@ void wallet_parse(char *line, int bitcoin_value, Bucket *bucket) {
 //    delete wallet; TODO PROSOXI: an den ginoun edo delete, prepei na ta kanei delete sto Bucket
     // TODO (1) wallet->addBitcoin: replace 100, 100 with value and denomination,
 }
+
+void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable) {
+
+    char *token;
+    char delim[] = " \n\r\t";
+
+    token = strtok(line, delim);
+    if (token == NULL) {
+        cout<<"Error in wallet parsing. No walletId given. Now exiting"<<endl;
+        exit(1);
+    }
+    Wallet *wallet = new Wallet(token);
+    token = strtok(NULL, delim);
+    while (token != NULL) {
+        wallet->addBitcoin(token, 100, 100);
+        token = strtok(NULL, delim);
+    }
+    hashTable->add(wallet);
+//    wallet->print();
+//    delete wallet; TODO PROSOXI: an den ginoun edo delete, prepei na ta kanei delete sto Bucket
+    // TODO (1) wallet->addBitcoin: replace 100, 100 with value and denomination,
+}
+
 
 void transaction_parse(char *line) {
 

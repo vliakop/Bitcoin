@@ -13,17 +13,18 @@ int main(int argc, char *argv[]) {
     int bitcoin_value = 100, sender_entries, receiver_entries, bucket_size;
 //    init_arguments(argc, argv, bitcoins, transactions, &bitcoin_value, &sender_entries, &receiver_entries, &bucket_size);
 
-    Bucket *bucket = new Bucket(2000, sizeof(Wallet));
+//    Bucket *bucket = new Bucket(2000, sizeof(Wallet));
+    HashTable *hashTable = new HashTable();
     FILE *fp = open_file(bitcoins);
     char buf[512];
 
     while (fgets(buf, 512, fp) != NULL) {
-        wallet_parse(buf, bitcoin_value, bucket);
+        wallet_parse(buf, bitcoin_value, hashTable);
     }
 
     close_file(fp);
-    bucket->print();
-    delete bucket;
+    hashTable->print();
+    delete hashTable;
 
 //    fp = open_file(transactions);
 //    while (fgets(buf, 512, fp) != NULL) {
