@@ -122,18 +122,20 @@ void transaction_parse(char *line) {
     }
 
     token = strtok(NULL, "\n\r");
+    char buf[255];
     if (token == NULL) {
-        // TODO get current time
+        time_t rawtime;
+        time(&rawtime); // Current time to time_t
+        struct tm *tmptr;
+        tmptr = localtime(&rawtime);    // time_t to struct tm
+        strftime(buf, 255, "%d-%m-%Y %R", tmptr);   // struct tm to string
+    } else {
+        strcpy(buf, token);
     }
-    cout<<"Date is '"<<token<<"'"<<endl;
 
+    cout<<"Date is '"<<buf<<"'"<<endl;
     // TODO checks (1) dates are ok, (2) sender exists + has balance, (3) receiver exists
     // TODO (4) kataxoriseis sta hashtables
-    Transaction *trans = new Transaction(id, sender, receiver, value, token);
+    Transaction *trans = new Transaction(id, sender, receiver, value, buf);
     trans->print();
-
-    if (token == NULL) {
-        // TODO date stuff
-    }
-    // TODO add transaction functionality
 }

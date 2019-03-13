@@ -10,14 +10,7 @@ Transaction:: Transaction(char *transactionID, char *senderWalletID, char *recei
     strcpy(this->senderWalletID, senderWalletID);
     strcpy(this->receiverWalletID, receiverWalletID);
     this->value = value;
-    tm.tm_year = 0;
-    tm.tm_mday = 0;
-    tm.tm_mon = 0;
-    tm.tm_wday = 0;
-    tm.tm_yday = 0;
-    tm.tm_hour = 0;
-    tm.tm_min = 0;
-    tm.tm_sec = 0;
+    memset(&tm, 0, sizeof(tm));
     strptime(date, "%d-%m-%Y %R", &(this->tm));
 }
 
