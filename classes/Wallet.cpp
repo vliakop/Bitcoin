@@ -43,11 +43,29 @@ void Wallet::setBitcoin_list(BitcoinList *bitcoin_list) {
     Wallet::bitcoin_list = bitcoin_list;
 }
 
+void Wallet::copyBitcoin_list(BitcoinList *bitcoin_list) {
+
+    if (bitcoin_list != NULL) {
+        delete bitcoin_list;
+    }
+    bitcoin_list = new BitcoinList(bitcoin_list);
+}
+
 void Wallet::addBitcoin(char *bitcoin_id, int value, int denomination) {
 
-    bitcoin_list->add(bitcoin_id, value, denomination);
+    if (bitcoin_list->contains(bitcoin_id)) {
+        bitcoin_list->update_coin(bitcoin_id, denomination);
+    } else {
+        bitcoin_list->add(bitcoin_id, value, denomination);
+    }
     balance += denomination;
 }
+
+void Wallet::addTransaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date) {
+
+    transaction_list->add(new Transaction(transaction_id, sender_id, receiver_id, value, date));
+}
+
 
 void Wallet::print() {
 

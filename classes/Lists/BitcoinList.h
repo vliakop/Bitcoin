@@ -5,7 +5,7 @@
 
 class BitcoinList {
 
-private:
+public:
 
     struct BitcoinNode {
 
@@ -17,6 +17,8 @@ private:
         ~BitcoinNode();
     };
 
+private:
+
     BitcoinNode *head;
     BitcoinNode *tail;
     int size;
@@ -24,6 +26,7 @@ private:
 public:
 
     BitcoinList();
+    BitcoinList(BitcoinList *bitcoinList);
     ~BitcoinList();
 
     BitcoinNode *getHead() const;
@@ -40,7 +43,11 @@ public:
 
     bool add(char *bitcoin_id, int bitcoin_value, int denomination);
 
+    void update_coin(char *bitcoin_id, int denomination);
+
     void print();
+
+    bool contains(char *bitcoin_id);
 
 //    Bitcoin* removeFromStart();
 //

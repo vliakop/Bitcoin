@@ -12,7 +12,6 @@ private:
     int balance;
     BitcoinList *bitcoin_list;
     TransactionList *transaction_list;
-    // TODO transaction list;
 
 public:
     Wallet(char *walletID, int balance = 0);
@@ -31,7 +30,11 @@ public:
 
     void setBitcoin_list(BitcoinList *bitcoin_list);
 
+    void copyBitcoin_list(BitcoinList *bitcoin_list);
+
     void addBitcoin(char *bitcoin_id, int value, int denomination);
+
+    void addTransaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date);
 
     void print();
 

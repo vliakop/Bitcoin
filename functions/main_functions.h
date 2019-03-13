@@ -14,3 +14,11 @@ bool close_file(FILE *fp);
 void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringList *bitcoinIDs);
 
 void transaction_parse(char *line);
+
+void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date);
+
+time_t string_to_time_t(char *buf);
+
+void create_transaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date, StringList *transaction_ids, HashTable *all_wallets, HashTable *senders, HashTable *receivers);
+
+void transfer_coins(Wallet *sender, Wallet *receiver, int value);
