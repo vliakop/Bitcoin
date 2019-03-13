@@ -50,6 +50,16 @@ bool HashTable::contains(Wallet *wallet) {
     return false;
 }
 
+bool HashTable::contains(char *walletId) {
+
+    unsigned long position = hash(walletId);
+    if (table[position]->contains(walletId)) {
+        return true;
+    }
+    return false;
+}
+
+
 void HashTable::add(Wallet *wallet) {
 
     if (contains(wallet)) {
@@ -66,5 +76,13 @@ void HashTable::print() {
     for (unsigned long i = 0; i < size; i++) {
         cout<<"Printing Hashtable position '"<<i<<"':"<<endl;
         table[i]->print();
+    }
+}
+
+Wallet* HashTable::getWallet(char *walletId) {
+
+    if(contains(walletId)) {
+        unsigned long position = hash(walletId);
+        return table[position]->getWallet(walletId);
     }
 }

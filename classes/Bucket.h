@@ -28,5 +28,7 @@ public:
 
     bool contains(char *walletID);
 
+    Wallet* getWallet(char *walletID);
+
 };
 

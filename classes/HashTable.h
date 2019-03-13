@@ -20,9 +20,13 @@ public:
 
     bool contains(Wallet *wallet);
 
+    bool contains(char *walletId);
+
     void add(Wallet *wallet);
 
     void print();
+
+    Wallet *getWallet(char *walledId);
 
 };
 

@@ -59,3 +59,14 @@ bool Bucket::contains(char *walletID) {
     }
     return false;
 }
+
+Wallet* Bucket::getWallet(char *walletID) {
+
+    Wallet *w;
+    for (int i = 0; i < records; i++) {
+        memcpy(&w, array + i*record_size, sizeof(Wallet*));
+        if (w->hasID(walletID)) {
+            return w;
+        }
+    }
+}

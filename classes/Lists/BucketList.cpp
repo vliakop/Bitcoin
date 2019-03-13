@@ -87,6 +87,19 @@ bool BucketList::contains(char *walletID) {
     return contain;
 }
 
+Wallet* BucketList::getWallet(char *walletID) {
+
+    if (size == 0) {
+        return NULL;
+    }
+    BucketNode *n = head;
+    while (n != NULL) {
+        if (n->bucket->contains(walletID)) {
+            return n->bucket->getWallet(walletID);
+        }
+    }
+}
+
 void BucketList::print() {
 
     BucketNode *n = head;
