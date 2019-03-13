@@ -2,6 +2,7 @@
 
 
 #include "Lists/BitcoinList.h"
+#include "Lists/TransactionList.h"
 
 class Wallet {
 
@@ -10,6 +11,7 @@ private:
     char walletID[50];
     int balance;
     BitcoinList *bitcoin_list;
+    TransactionList *transaction_list;
     // TODO transaction list;
 
 public:

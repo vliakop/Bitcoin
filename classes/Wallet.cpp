@@ -10,11 +10,13 @@ Wallet::Wallet(char *walletID, int balance) {
     strcpy(this->walletID, walletID);
     bitcoin_list = new BitcoinList();
     this->balance = balance;
+    transaction_list = new TransactionList();
 }
 
 Wallet::~Wallet() {
 
     delete bitcoin_list;
+    delete transaction_list;
 }
 
 char *Wallet::getWalletID()  {
