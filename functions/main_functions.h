@@ -11,8 +11,6 @@ FILE* open_file(char *filename);
 
 bool close_file(FILE *fp);
 
-void wallet_parse(char *line, int bitcoin_value, Bucket *bucket);
-
 void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringList *bitcoinIDs);
 
 void transaction_parse(char *line);

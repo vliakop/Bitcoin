@@ -57,29 +57,6 @@ bool close_file(FILE *fp) {
 }
 
 
-void wallet_parse(char *line, int bitcoin_value, Bucket *bucket) {
-
-    char *token;
-    char delim[] = " \n\r\t";
-
-    token = strtok(line, delim);
-    if (token == NULL) {
-        cout<<"Error in wallet parsing. No walletId given. Now exiting"<<endl;
-        exit(1);
-    }
-    Wallet *wallet = new Wallet(token);
-    token = strtok(NULL, delim);
-    while (token != NULL) {
-
-        wallet->addBitcoin(token, 100, 100);
-        token = strtok(NULL, delim);
-    }
-    bucket->addRecord(wallet);
-    wallet->print();
-//    delete wallet; TODO PROSOXI: an den ginoun edo delete, prepei na ta kanei delete sto Bucket
-    // TODO (1) wallet->addBitcoin: replace 100, 100 with value and denomination,
-}
-
 void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringList *bitcoinIDs) {
 
     char *token;
@@ -121,12 +98,23 @@ void transaction_parse(char *line) {
     strcpy(id, token);
 
     token = strtok(NULL, delim);
+    if (token == NULL) {
+        cout<<"SenderWalletId was needed. Now exiting"<<endl;
+        exit(1);
+    }
     strcpy(sender, token);
 
     token = strtok(NULL, delim);
+    if (token == NULL) {
+        cout<<"SenderWallerID was needed. Now exiting"<<endl;
+        exit(1);
+    }
     strcpy(receiver, token);
 
     token = strtok(NULL, delim);
+    if (token == NULL) {
+        cout<<"Value was needed. Now exiting"<<endl;
+    }
     value = atoi(token);
     if (value < 0) {
         cout<<"Invalid value of bitcoin transfer"<<endl;
@@ -134,8 +122,13 @@ void transaction_parse(char *line) {
     }
 
     token = strtok(NULL, "\n\r");
+    if (token == NULL) {
+        // TODO get current time
+    }
     cout<<"Date is '"<<token<<"'"<<endl;
 
+    // TODO checks (1) dates are ok, (2) sender exists + has balance, (3) receiver exists
+    // TODO (4) kataxoriseis sta hashtables
     Transaction *trans = new Transaction(id, sender, receiver, value, token);
     trans->print();
 
