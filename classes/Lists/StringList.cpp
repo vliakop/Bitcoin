@@ -17,7 +17,7 @@ StringList::StringNode::~StringNode() {
     s = NULL;
 }
 
-StringList::StringList() : size(0), head(NULL) {}
+StringList::StringList() : size(0), head(NULL), max(0) {}
 
 StringList::~StringList() {
 
@@ -34,6 +34,12 @@ void StringList::add(char *s) {
     StringList::StringNode *n = new StringNode(s, head);
     head = n;
     size += 1;
+
+    // An to string p eisigages einai ari8mos kai megaluteros tou current max, tote einai to neo max
+    int i = atoi(s);
+    if (i > max) {
+        max = i;
+    }
 }
 
 bool StringList::contains(char *word) {
@@ -61,4 +67,9 @@ void StringList::print() {
         }
         n = n->next;
     }
+}
+
+int StringList::getMax() {
+
+    return max;
 }

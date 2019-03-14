@@ -17,6 +17,7 @@ private:
 
     StringNode *head;
     int size;
+    int max;
 
 public:
 
@@ -25,6 +26,7 @@ public:
     void add(char *s);
     bool contains(char *word);
     void print();
+    int getMax();
 
 
 };
