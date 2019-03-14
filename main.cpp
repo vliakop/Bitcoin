@@ -10,12 +10,13 @@ int main(int argc, char *argv[]) {
 
     char commands[] = "commands.txt";
     char command[1024];
-    FILE *ff = fopen(commands, "r");
-    while (fgets(command, 1024, ff) != NULL) {
+
+    while (fgets(command, 1024, stdin) != NULL) {
+        cout<<"give command"<<endl;
         command_parser(command);
         memset(command, 0, 1024);
     }
-    fclose(ff); return 0;
+    return 0;
 
     // TODO change static bitcoins, transactions strings to char *
     char bitcoins[] = "./bitCoinBalancesFile.txt";

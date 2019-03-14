@@ -14,12 +14,12 @@ void command_parser(char *line) {
         return;
     }
 
-    if (strcmp(token, "requestTransaction") == 0) {
+    if (strncmp(token, "requestTransaction", strlen(token)) == 0) {
         token = strtok(NULL, "\n");
         request_transactions_handler(token);
     } else if (strcmp(token, "requestTransactions") == 0) {
         token = strtok(NULL, "\n");
-        char *pch = strrchr(line, ';');
+        char *pch = strrchr(line, ';'); // TODO uparxei error sto file logo ';'
         if (pch == NULL) {
             request_transactions_file_handler(token);
         } else {
@@ -42,6 +42,8 @@ void command_parser(char *line) {
         tracecoin_status_handler(token);
     } else if (strcmp(token, "exit") == 0) {
         // TODO handle
+    } else {
+        cout<<"Command '"<<line<<"' was not found"<<endl;
     }
 }
 
