@@ -56,9 +56,9 @@ void Wallet::setBitcoin_list(BitcoinList *bitcoin_list) {
 void Wallet::copyBitcoin_list(BitcoinList *bitcoin_list) {
 
     if (bitcoin_list != NULL) {
-        delete bitcoin_list;
+        delete this->bitcoin_list;
     }
-    bitcoin_list = new BitcoinList(bitcoin_list);
+    this->bitcoin_list = new BitcoinList(bitcoin_list);
 }
 
 void Wallet::addBitcoin(char *bitcoin_id, int value, int denomination) {

@@ -85,7 +85,6 @@ void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringLis
 
 
 void transaction_parse(char *line) {
-    // TODO if token != NULL se ka8e strtok
     char id[15];
     char sender[50];
     char receiver[50];
@@ -135,7 +134,6 @@ void transaction_parse(char *line) {
 
     cout<<"Date is '"<<buf<<"'"<<endl;
     // TODO checks (1) dates are ok, (2) sender exists + has balance, (3) receiver exists
-    // TODO (4) kataxoriseis sta hashtables
     Transaction *trans = new Transaction(id, sender, receiver, value, buf);
     trans->print();
 }
@@ -191,14 +189,13 @@ void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, Ha
 
     time_t date = string_to_time_t(buf);
 
-    // TODO sto telos tis sunartisis *latest_date = date
 
     cout<<"Date is '"<<buf<<"'"<<endl;
     // TODO checks (1) dates are ok, (2) sender exists + has balance, (3) receiver exists
-    // TODO (4) kataxoriseis sta hashtables
     Transaction *transa = new Transaction(id, sender, receiver, value, buf);
     transa->print();
     create_transaction(id, sender, receiver, value, buf, trans, latest_date, all_wallets, senders, receivers);
+    *latest_date = date;
 }
 
 time_t string_to_time_t(char *buf) {
@@ -246,7 +243,6 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
 
     // Pointer sto walletID sto senders HashTable
     Wallet *sender = senders->getWallet(sender_id);
-    // TODO prosoxi sto ti kanei i parakato add: de 8elo na deixnei sto idio object me to allo hashtable. isos xreiastei na ftiakso neo Wallet
     if (sender == NULL) {
         senders->add(new Wallet(all_sender));
         sender = senders->getWallet(sender_id);
@@ -254,14 +250,15 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
 
     // Pointer sto walletID sto receivers HashTable
     Wallet *receiver = receivers->getWallet(receiver_id);
-    // TODO prosoxi sto ti kanei i parakato add: de 8elo na deixnei sto idio object me to allo hashtable. isos xreiastei na ftiakso neo Wallet
     if (receiver == NULL) {
         receivers->add(new Wallet(all_receiver));
         receiver = receivers->getWallet(receiver_id);
     }
 
+    cout<<"O sender exei tosa bitcoins: "<<sender->getBitcoin_list()->getSize()<<endl;
     // Kane metafora oson bitcoins xreiazetai
     transfer_coins(sender, receiver, value);
+    cout<<"O sender exei tosa bitcoins: "<<sender->getBitcoin_list()->getSize()<<endl;
 
     // Ananeose ta balances sta wallets tou all_wallets hash table
     all_sender->setBalance(all_sender->getBalance() - value);
@@ -274,6 +271,7 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
     receiver->addTransaction(transaction_id, sender_id, receiver_id, value, date);
 
     // Antigrafi tou sender bitcoin-list sto all_wallets
+    cout<<"O sender exei tosa bitcoins: "<<sender->getBitcoin_list()->getSize()<<endl;
     all_sender->copyBitcoin_list(sender->getBitcoin_list());
 
     // Antigrafi tou receiver bitcoin-list sto all wallets
