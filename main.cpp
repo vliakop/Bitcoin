@@ -28,10 +28,10 @@ int main(int argc, char *argv[]) {
     close_file(fp);
     all_wallets->print();
 //TODO    delete all_wallets;
-
+    time_t tt = 0;
     fp = open_file(transactions);
     while (fgets(buf, 512, fp) != NULL) {
-        transaction_parse(buf);
+        transaction_parse(buf, trans, all_wallets, sender_wallets, receiver_wallets, &tt);
     }
     close_file(fp);
 

@@ -19,6 +19,17 @@ TransactionList::TransactionList() {
     size = 0;
 }
 
+TransactionList::TransactionList(TransactionList *list) {
+
+    TransactionNode *n = list->getHead();
+    while (n != NULL) {
+        if (n->transaction != NULL) {
+            this->add(new Transaction(n->transaction));
+        }
+        n = n->next;
+    }
+}
+
 TransactionList::~TransactionList() {
 
     TransactionNode *n = head;

@@ -23,6 +23,7 @@ private:
 public:
 
     TransactionList();
+    TransactionList(TransactionList *list);
     ~TransactionList();
 
     TransactionNode *getHead() const;

@@ -198,6 +198,7 @@ void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, Ha
     // TODO (4) kataxoriseis sta hashtables
     Transaction *transa = new Transaction(id, sender, receiver, value, buf);
     transa->print();
+    create_transaction(id, sender, receiver, value, buf, trans, latest_date, all_wallets, senders, receivers);
 }
 
 time_t string_to_time_t(char *buf) {
@@ -247,7 +248,7 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
     Wallet *sender = senders->getWallet(sender_id);
     // TODO prosoxi sto ti kanei i parakato add: de 8elo na deixnei sto idio object me to allo hashtable. isos xreiastei na ftiakso neo Wallet
     if (sender == NULL) {
-        senders->add(all_sender);
+        senders->add(new Wallet(all_sender));
         sender = senders->getWallet(sender_id);
     }
 
@@ -255,7 +256,7 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
     Wallet *receiver = receivers->getWallet(receiver_id);
     // TODO prosoxi sto ti kanei i parakato add: de 8elo na deixnei sto idio object me to allo hashtable. isos xreiastei na ftiakso neo Wallet
     if (receiver == NULL) {
-        receivers->add(all_receiver);
+        receivers->add(new Wallet(all_receiver));
         receiver = receivers->getWallet(receiver_id);
     }
 
@@ -284,8 +285,8 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
 void transfer_coins(Wallet *sender, Wallet *receiver, int value) {
 
     BitcoinList *sender_coins = sender->getBitcoin_list();
-
     BitcoinList::BitcoinNode *n = sender_coins->getHead();
+
     while (n != NULL && value > 0) {
         int denomination = n->bitcoin->getDenomination();
         if (denomination >= 0) {

@@ -14,6 +14,15 @@ Transaction:: Transaction(char *transactionID, char *senderWalletID, char *recei
     strptime(date, "%d-%m-%Y %R", &(this->tm));
 }
 
+Transaction::Transaction(Transaction *transaction) {
+
+    strcpy(transactionID, transaction->transactionID);
+    strcpy(senderWalletID, transaction->senderWalletID);
+    strcpy(receiverWalletID, transaction->receiverWalletID);
+    value = transaction->value;
+    memcpy(&tm, &(transaction->tm), sizeof(struct tm));
+}
+
 Transaction::~Transaction() {
 
 }
