@@ -16,6 +16,8 @@ private:
 public:
     Wallet(char *walletID, int balance = 0);
 
+    Wallet(Wallet *wallet);
+
     ~Wallet();
 
     char *getWalletID() ;

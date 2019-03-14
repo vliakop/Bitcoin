@@ -11,24 +11,27 @@ BitcoinList::BitcoinNode::BitcoinNode(char *bitcoin_id, int bitcoin_value, int d
     this->next = next;
 }
 
-BitcoinList::BitcoinList(BitcoinList *bitcoinList) {
-
-    BitcoinList::BitcoinNode *n = bitcoinList->getHead();
-    while (n != NULL) {
-        this->add(n->bitcoin->getBitcoin_id(), n->bitcoin->getValue(), n->bitcoin->getDenomination());
-        n = n->next;
-    }
-}
-
 BitcoinList::BitcoinNode::~BitcoinNode() {
 
     delete bitcoin;
 }
 
+
 BitcoinList::BitcoinList() {
 
     head = tail = NULL;
     size = 0;
+}
+
+BitcoinList::BitcoinList(BitcoinList *bitcoinList) {
+
+    bitcoinList->print();
+    BitcoinList::BitcoinNode *n = bitcoinList->getHead();
+    this->size = 0;
+    while (n != NULL) {
+        this->add(n->bitcoin->getBitcoin_id(), n->bitcoin->getValue(), n->bitcoin->getDenomination());
+        n = n->next;
+    }
 }
 
 BitcoinList::~BitcoinList() {
@@ -39,8 +42,9 @@ BitcoinList::~BitcoinList() {
         head = head->next;
         delete n;
         n = head;
-        size--;
     }
+    head = tail = NULL;
+    size = 0;
 }
 
 BitcoinList::BitcoinNode *BitcoinList::getHead() const {
@@ -96,6 +100,10 @@ void BitcoinList::update_coin(char *bitcoin_id, int denomination) {
 
 void BitcoinList::print() {
 
+    if (size == 0) {
+        cout<<"Bitcoinist is empty!"<<endl;
+        return;
+    }
     int i = size;
     BitcoinNode *n = head;
     while (i > 0) {

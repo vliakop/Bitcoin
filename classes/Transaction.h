@@ -16,6 +16,8 @@ public:
 
     Transaction(char *transactionID, char *senderWalletID, char *receiverWalletID, int value, char *date);
 
+    Transaction(Transaction *transaction);
+
     ~Transaction();
 
     char* getTransactionID();
