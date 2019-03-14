@@ -56,6 +56,12 @@ bool close_file(FILE *fp) {
     fclose(fp);
 }
 
+time_t string_to_time_t(char *buf) {
+
+    struct tm tm = {0};
+    strptime(buf, "%d-%m-%Y %R", &tm);
+    return mktime(&tm);
+}
 
 void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringList *bitcoinIDs, BitcoinTreeList *btl) {
 
@@ -86,60 +92,6 @@ void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringLis
 }
 
 
-void transaction_parse(char *line) {
-    char id[15];
-    char sender[50];
-    char receiver[50];
-    int value;
-
-    char *token;
-    char delim[] = " \n\t\r";
-
-    token = strtok(line, delim);    // id
-    strcpy(id, token);
-
-    token = strtok(NULL, delim);
-    if (token == NULL) {
-        cout<<"SenderWalletId was needed. Now exiting"<<endl;
-        exit(1);
-    }
-    strcpy(sender, token);
-
-    token = strtok(NULL, delim);
-    if (token == NULL) {
-        cout<<"SenderWallerID was needed. Now exiting"<<endl;
-        exit(1);
-    }
-    strcpy(receiver, token);
-
-    token = strtok(NULL, delim);
-    if (token == NULL) {
-        cout<<"Value was needed. Now exiting"<<endl;
-    }
-    value = atoi(token);
-    if (value < 0) {
-        cout<<"Invalid value of bitcoin transfer"<<endl;
-        exit(1);
-    }
-
-    token = strtok(NULL, "\n\r");
-    char buf[255];
-    if (token == NULL) {
-        time_t rawtime;
-        time(&rawtime); // Current time to time_t
-        struct tm *tmptr;
-        tmptr = localtime(&rawtime);    // time_t to struct tm
-        strftime(buf, 255, "%d-%m-%Y %R", tmptr);   // struct tm to string
-    } else {
-        strcpy(buf, token);
-    }
-
-    cout<<"Date is '"<<buf<<"'"<<endl;
-    // TODO checks (1) dates are ok, (2) sender exists + has balance, (3) receiver exists
-    Transaction *trans = new Transaction(id, sender, receiver, value, buf);
-    trans->print();
-}
-
 void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date){
 
     char id[15];
@@ -150,9 +102,11 @@ void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, Ha
     char *token;
     char delim[] = " \n\t\r";
 
+    /* transaction id */
     token = strtok(line, delim);   // Pare to id tou transaction
     strcpy(id, token);
 
+    /* senderWalletID */
     token = strtok(NULL, delim);    // Pare to sender_wallet id
     if (token == NULL) {
         cout<<"SenderWalletId was needed. Now exiting"<<endl;
@@ -160,6 +114,7 @@ void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, Ha
     }
     strcpy(sender, token);
 
+    /* receiverWalletID */
     token = strtok(NULL, delim);    // Pare to receiver wallet id
     if (token == NULL) {
         cout<<"ReceiverWallerID was needed. Now exiting"<<endl;
@@ -167,6 +122,7 @@ void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, Ha
     }
     strcpy(receiver, token);
 
+    /* value */
     token = strtok(NULL, delim);    // Pare tin aksia se $
     if (token == NULL) {
         cout<<"Value was needed. Now exiting"<<endl;
@@ -177,35 +133,30 @@ void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, Ha
         exit(1);
     }
 
+    /* time and date */
     token = strtok(NULL, "\n\r");   // Pare to date
     char buf[255];
     if (token == NULL) {    // An de do8ei, bale to current_date
+        cout<<"PIRA CURRENT DATE BITCHES"<<endl;
         time_t rawtime;
         time(&rawtime); // Current time to time_t
         struct tm *tmptr;
         tmptr = localtime(&rawtime);    // time_t to struct tm
         strftime(buf, 255, "%d-%m-%Y %R", tmptr);   // struct tm to string
     } else {
-        strcpy(buf, token);
+        strncpy(buf, token, 255);
     }
 
-    time_t date = string_to_time_t(buf);
-
-
-    cout<<"Date is '"<<buf<<"'"<<endl;
-    // TODO checks (1) dates are ok, (2) sender exists + has balance, (3) receiver exists
-    Transaction *transa = new Transaction(id, sender, receiver, value, buf);
-    transa->print();
+    /* Create the transaction */
     create_transaction(id, sender, receiver, value, buf, trans, latest_date, all_wallets, senders, receivers);
-    *latest_date = date;
+
+    /* Update the latest date */
+    time_t next_date = string_to_time_t(buf);
+    if (difftime(next_date, *latest_date) > 0) {
+        *latest_date = next_date;
+    }
 }
 
-time_t string_to_time_t(char *buf) {
-
-    struct tm tm;
-    strptime(buf, "%d-%m-%Y %R", &tm);
-    return mktime(&tm);
-}
 
 void create_transaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date, StringList *transaction_ids, time_t *latest_date, HashTable *all_wallets, HashTable *senders, HashTable *receivers) {
 
@@ -219,7 +170,7 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
     time_t current_date = string_to_time_t(date);
     double diff = difftime(current_date, *latest_date);
     if (diff < 0) {
-        cout<<"Current date is prior to latest date. Cannot create the transaction"<<endl;
+        cout<<"Transaction date is prior to latest date. Cannot create the transaction with id '"<<transaction_id<<"'"<<endl;
         return;
     }
 
@@ -227,6 +178,7 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
     Wallet *all_sender = all_wallets->getWallet(sender_id);
     if (all_sender == NULL) {
         cout<<"Sender with id '"<<sender_id<<"' has not Wallet"<<endl;
+        all_sender->print();
         return;
     }
 
@@ -257,10 +209,8 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
         receiver = receivers->getWallet(receiver_id);
     }
 
-    cout<<"O sender exei tosa bitcoins: "<<sender->getBitcoin_list()->getSize()<<endl;
     // Kane metafora oson bitcoins xreiazetai
     transfer_coins(sender, receiver, value);
-    cout<<"O sender exei tosa bitcoins: "<<sender->getBitcoin_list()->getSize()<<endl;
 
     // Ananeose ta balances sta wallets tou all_wallets hash table
     all_sender->setBalance(all_sender->getBalance() - value);
@@ -272,15 +222,16 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
     // Ftiakse transaction gia ton receiver
     receiver->addTransaction(transaction_id, sender_id, receiver_id, value, date);
 
+    // Bale to transaction id sti lista me ta "kammena" id
+    transaction_ids->add(transaction_id);
+
     // Antigrafi tou sender bitcoin-list sto all_wallets
-    cout<<"O sender exei tosa bitcoins: "<<sender->getBitcoin_list()->getSize()<<endl;
     all_sender->copyBitcoin_list(sender->getBitcoin_list());
 
     // Antigrafi tou receiver bitcoin-list sto all wallets
     all_receiver->copyBitcoin_list(receiver->getBitcoin_list());
 
 }
-
 
 void transfer_coins(Wallet *sender, Wallet *receiver, int value) {
 

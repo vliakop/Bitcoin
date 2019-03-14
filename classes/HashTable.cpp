@@ -35,7 +35,6 @@ unsigned long HashTable::hash(char *str) {
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
     }
     hash = hash % size;
-    cout<<"Hash for '"<<str<<"' is: "<<hash<<endl;
     free(str3);
     return hash;
 }

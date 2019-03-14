@@ -21,6 +21,7 @@ TransactionList::TransactionList() {
 
 TransactionList::TransactionList(TransactionList *list) {
 
+    this->size = 0;
     TransactionNode *n = list->getHead();
     while (n != NULL) {
         if (n->transaction != NULL) {

@@ -47,5 +47,5 @@ void Bitcoin::setDenomination(int denomination) {
 
 void Bitcoin::print() {
 
-    cout<<"Bitcoin id: "<<bitcoin_id<<endl;
+    cout<<" Bitcoin id: "<<bitcoin_id<<endl;
 }

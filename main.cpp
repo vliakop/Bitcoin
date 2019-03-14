@@ -32,31 +32,32 @@ int main(int argc, char *argv[]) {
     HashTable *receiver_wallets = new HashTable();
     StringList *coins = new StringList();
     StringList *trans = new StringList();
-    FILE *fp = open_file(bitcoins);
     BitcoinTreeList *btl = new BitcoinTreeList();
-    char buf[512];
 
+    /* Bitcoins */
+    FILE *fp = open_file(bitcoins);
+    char buf[512];
     while (fgets(buf, 512, fp) != NULL) {
         wallet_parse(buf, bitcoin_value, all_wallets, coins, btl);
     }
-
     close_file(fp);
-    all_wallets->print();
-    delete all_wallets;
-    delete sender_wallets;
-    delete receiver_wallets;
-    delete coins;
-    delete trans;
+ //   all_wallets->print();
 
-    return 0;
-
-//TODO    delete all_wallets;
+    /* Transactions */
     time_t tt = 0;
+    memset(&tt, 0, sizeof(time_t));
     fp = open_file(transactions);
     while (fgets(buf, 512, fp) != NULL) {
         transaction_parse(buf, trans, all_wallets, sender_wallets, receiver_wallets, &tt);
     }
     close_file(fp);
 
-    return 0;
+    /* Thanatos */
+    delete all_wallets;
+    delete sender_wallets;
+    delete receiver_wallets;
+    delete coins;
+    delete trans;
+
+return 0;
 }

@@ -25,7 +25,6 @@ BitcoinList::BitcoinList() {
 
 BitcoinList::BitcoinList(BitcoinList *bitcoinList) {
 
-    bitcoinList->print();
     BitcoinList::BitcoinNode *n = bitcoinList->getHead();
     this->size = 0;
     while (n != NULL) {
@@ -93,6 +92,7 @@ void BitcoinList::update_coin(char *bitcoin_id, int denomination) {
             if (n->bitcoin->getDenomination() > n->bitcoin->getValue()) {
                 cout<<"Bitcoin denomination shouldnt be higher than value"<<endl;
             }
+            return;
         }
         n = n->next;
     }
@@ -101,7 +101,7 @@ void BitcoinList::update_coin(char *bitcoin_id, int denomination) {
 void BitcoinList::print() {
 
     if (size == 0) {
-        cout<<"Bitcoinist is empty!"<<endl;
+        cout<<" Bitcoinist is empty!"<<endl;
         return;
     }
     int i = size;

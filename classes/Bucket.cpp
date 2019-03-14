@@ -36,6 +36,10 @@ void Bucket::print() {
     Wallet *w;
     for (int i = 0; i < records; i++) {
         memcpy(&w, array + i*record_size, sizeof(Wallet*));
+        if(w == NULL) {
+            cout<<"HUSTON WE HAVE A PROBLEM"<<endl;
+            return;
+        }
         w->print();
     }
 }
