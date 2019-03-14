@@ -20,21 +20,21 @@ void command_parser(char *line, StringList *trans, HashTable *all_wallets, HashT
         request_transaction_handler(token, trans, all_wallets, senders, receivers, latest_date);
     } else if (strcmp(token, "requestTransactions") == 0) {
         token = strtok(NULL, "\n");
-        char *pch = strrchr(line, ';'); // TODO uparxei error sto file logo ';'
-        if (pch == NULL) {
+        char *pch = strchr(line, ';');
+        if (pch == NULL) {  // Diabazoume apo arxeio
             request_transactions_file_handler(token, trans, all_wallets, senders, receivers, latest_date);
         } else {
             request_transactions_handler(token);
         }
     } else if (strcmp(token, "findEarnings") == 0) {
         token = strtok(NULL, "\n");
-        find_earnings_handler(token);
+        find_earnings_handler(token, receivers);
     } else if (strcmp(token, "findPayments") == 0) {
         token = strtok(NULL, "\n");
-        find_payments_handler(token);
+        find_payments_handler(token, senders);
     } else if(strcmp(token, "walletStatus") == 0) {
         token = strtok(NULL, "\n");
-        wallet_status_handler(token);
+        wallet_status_handler(token, all_wallets);
     } else if(strcmp(token, "bitcoinStatus") == 0) {
         token = strtok(NULL, "\n");
         bitcoin_status_handler(token);
@@ -55,8 +55,16 @@ void request_transaction_handler(char *line, StringList *trans, HashTable *all_w
         return;
     }
 
-//    cout<<"requestTransaction "<<line<<endl;
-    transaction_parse(line, trans, all_wallets, senders, receivers, latest_date);
+    int id = trans->getMax() + 1;
+    char transaction_id[128];   // TODO readme.
+    memset(transaction_id, 0, 128);
+    sprintf(transaction_id, "%d", id);
+    char *command = (char *)malloc(strlen(transaction_id) + strlen(line) + 2);
+    strcpy(command, transaction_id);
+    strcat(command, " ");
+    strcat(command, line);
+    transaction_parse(command, trans, all_wallets, senders, receivers, latest_date);
+    free(command);
 }
 
 void request_transactions_handler(char *line) {
@@ -88,7 +96,7 @@ void request_transactions_file_handler(char *line, StringList *trans, HashTable 
     }
 }
 
-void find_earnings_handler(char *line) {
+void find_earnings_handler(char *line, HashTable *receivers) {
 
     if (line == NULL) {
         cout<<"No args for findEarnings command"<<endl;
@@ -104,6 +112,7 @@ void find_earnings_handler(char *line) {
         cout<<"findEarnings command cannot be executed. WalletID was expected but none provided"<<endl;
         return;
     }
+    strcpy(walletID, token);
 
     char time1[6];
     char time2[6];
@@ -112,13 +121,13 @@ void find_earnings_handler(char *line) {
 
     token = strtok(NULL, delims);
     if (token == NULL) {
-        // TODO full-time-search
+        findPayments_all(walletID, receivers);
     } else {
         char *pch = strchr(token, ':');
-        if (pch == NULL) {  // year-only seach: xreiazomai akoma ena token
+        if (pch == NULL) {  // year-only search: xreiazomai akoma ena token
             pch = strchr(token, '-');   // Elegxos oti einai imerominia
             if (pch == NULL) {
-                cout<<"Wrong find-earnings command given. Expected time or date but none given. Cannot execute"<<endl;
+                cout<<"Wrong findEarnings command given. Expected time or date but none given. Cannot execute"<<endl;
                 return;
             }
             strncpy(year1, token, 11);
@@ -129,11 +138,11 @@ void find_earnings_handler(char *line) {
             }
             pch = strchr(token , '-');
             if (pch == NULL) {
-                cout<<"Wrong find-earnings command given. Expected second date but none given. Cannot execute"<<endl;
+                cout<<"Wrong findEarnings command given. Expected second date but none given. Cannot execute"<<endl;
                 return;
             }
             strncpy(year2, token, 11);
-            // TODO year-only search
+            findPayments_date(walletID, year1, year2, receivers);
             return;
         } else {    // exo eite time-only search i full-time search me sugkekrimena dates
             strncpy(time1, token, 6);
@@ -145,14 +154,10 @@ void find_earnings_handler(char *line) {
             pch = strchr(token, ':');
             if (pch != NULL) {  // time-only search
                 strncpy(time2, token, 6);
-                // TODO time-only search
+                cout<<"findPayments time "<<time1<<" "<<time2<<endl;
+                findPayments_time(walletID, time1, time2, receivers);
                 return;
             } else {    // full-time-search
-                token = strtok(NULL, delims);
-                if (token == NULL) {
-                    cout<<"Expected date1 in full-time findEarning but none given. Aborting"<<endl;
-                    return;
-                }
                 strncpy(year1, token, 11);
                 token = strtok(NULL, delims);
                 if (token == NULL) {
@@ -166,7 +171,7 @@ void find_earnings_handler(char *line) {
                     return;
                 }
                 strncpy(year2, token, 11);
-                // TODO full-time search
+                findPayments_full(walletID, time1, year1, time2, year2, receivers);
                 return;
             }
 
@@ -174,7 +179,7 @@ void find_earnings_handler(char *line) {
     }
 }
 
-void find_payments_handler(char *line) {
+void find_payments_handler(char *line, HashTable *senders) {
 
     if (line == NULL) {
         cout<<"No args for findPayments command"<<endl;
@@ -190,6 +195,7 @@ void find_payments_handler(char *line) {
         cout<<"findPayments command cannot be executed. WalletID was expected but none provided"<<endl;
         return;
     }
+    strcpy(walletID, token);
 
     char time1[6];
     char time2[6];
@@ -198,10 +204,10 @@ void find_payments_handler(char *line) {
 
     token = strtok(NULL, delims);
     if (token == NULL) {
-        // TODO full-time-search
+        findPayments_all(walletID, senders);
     } else {
         char *pch = strchr(token, ':');
-        if (pch == NULL) {  // year-only seach: xreiazomai akoma ena token
+        if (pch == NULL) {  // year-only search: xreiazomai akoma ena token
             pch = strchr(token, '-');   // Elegxos oti einai imerominia
             if (pch == NULL) {
                 cout<<"Wrong find-payments command given. Expected time or date but none given. Cannot execute"<<endl;
@@ -219,7 +225,7 @@ void find_payments_handler(char *line) {
                 return;
             }
             strncpy(year2, token, 11);
-            // TODO year-only search
+            findPayments_date(walletID, year1, year2, senders);
             return;
         } else {    // exo eite time-only search i full-time search me sugkekrimena dates
             strncpy(time1, token, 6);
@@ -231,14 +237,10 @@ void find_payments_handler(char *line) {
             pch = strchr(token, ':');
             if (pch != NULL) {  // time-only search
                 strncpy(time2, token, 6);
-                // TODO time-only search
+                cout<<"findPayments time "<<time1<<" "<<time2<<endl;
+                findPayments_time(walletID, time1, time2, senders);
                 return;
             } else {    // full-time-search
-                token = strtok(NULL, delims);
-                if (token == NULL) {
-                    cout<<"Expected date1 in full-time findPayments but none given. Aborting"<<endl;
-                    return;
-                }
                 strncpy(year1, token, 11);
                 token = strtok(NULL, delims);
                 if (token == NULL) {
@@ -252,7 +254,7 @@ void find_payments_handler(char *line) {
                     return;
                 }
                 strncpy(year2, token, 11);
-                // TODO full-time search
+                findPayments_full(walletID, time1, year1, time2, year2, senders);
                 return;
             }
 
@@ -260,14 +262,18 @@ void find_payments_handler(char *line) {
     }
 }
 
-void wallet_status_handler(char *line) {
+void wallet_status_handler(char *line, HashTable *all_wallets) {
 
     if (line == NULL) {
         cout<<"No args for wallet-status command"<<endl;
         return;
     }
-
-    cout<<"wallet-status "<<line<<endl;
+    char *walletID = strtok(line, "\n\t\r ");
+    if (walletID == NULL) {
+        cout<<"Expected walletID but none given. Command cannot be executed"<<endl;
+        return;
+    }
+    walletStatus(walletID, all_wallets);
     //TODO functionality
 }
 

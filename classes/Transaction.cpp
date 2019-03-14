@@ -11,7 +11,13 @@ Transaction:: Transaction(char *transactionID, char *senderWalletID, char *recei
     strcpy(this->receiverWalletID, receiverWalletID);
     this->value = value;
     memset(&tm, 0, sizeof(tm));
-    strptime(date, "%d-%m-%Y %R", &(this->tm));
+    struct tm ttm;
+    strptime(date, "%d-%m-%Y %R", &(ttm));
+    this->tm.tm_mday = ttm.tm_mday;
+    this->tm.tm_mon = ttm.tm_mon;
+    this->tm.tm_year = ttm.tm_year;
+    this->tm.tm_hour = ttm.tm_hour;
+    this->tm.tm_min = ttm.tm_min;
 }
 
 Transaction::Transaction(Transaction *transaction) {

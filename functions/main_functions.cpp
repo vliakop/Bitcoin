@@ -137,7 +137,6 @@ void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, Ha
     token = strtok(NULL, "\n\r");   // Pare to date
     char buf[255];
     if (token == NULL) {    // An de do8ei, bale to current_date
-        cout<<"PIRA CURRENT DATE BITCHES"<<endl;
         time_t rawtime;
         time(&rawtime); // Current time to time_t
         struct tm *tmptr;
@@ -178,7 +177,6 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
     Wallet *all_sender = all_wallets->getWallet(sender_id);
     if (all_sender == NULL) {
         cout<<"Sender with id '"<<sender_id<<"' has not Wallet"<<endl;
-        all_sender->print();
         return;
     }
 
@@ -231,6 +229,8 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
     // Antigrafi tou receiver bitcoin-list sto all wallets
     all_receiver->copyBitcoin_list(receiver->getBitcoin_list());
 
+    cout<<"Transaction '"<<transaction_id<<" "<<sender_id<< " "<<receiver_id<<" "<<value<<" "<<date<<"' completed"<<endl;
+
 }
 
 void transfer_coins(Wallet *sender, Wallet *receiver, int value) {
@@ -268,7 +268,7 @@ void findEarnings_time(char *walletID, char *time1, char *time2, HashTable *rece
 
     Wallet *wallet = receivers->getWallet(walletID);
     if (wallet == NULL) {
-        cout<<"Wallet with id '"<<walletID<<"' doesn't exist. Cannot time findEarnings"<<endl;
+        cout<<"Wallet with id '"<<walletID<<"' has 0 earnings"<<endl;
         return;
     }
 
@@ -300,7 +300,7 @@ void findEarnings_time(char *walletID, char *time1, char *time2, HashTable *rece
         transactiontm.tm_mon = 0;
         transactiontm.tm_year = 0;
         tr = mktime(&transactiontm);   // Metatropi se xrono sustimatos
-        if (lower <= tr <= upper) {
+        if (lower <= tr && tr <= upper)  {
             transactionIDs->add(n->transaction->getTransactionID());
             amount += n->transaction->getValue();
         }
@@ -318,7 +318,7 @@ void findEarnings_date(char *walletID, char *date1, char *date2, HashTable *rece
 
     Wallet *wallet = receivers->getWallet(walletID);
     if (wallet == NULL) {
-        cout<<"Wallet with id '"<<walletID<<"' doesn't exist. Cannot date findEarnings"<<endl;
+        cout<<"Wallet with id '"<<walletID<<"' has 0 earnings"<<endl;
         return;
     }
 
@@ -349,7 +349,7 @@ void findEarnings_date(char *walletID, char *date1, char *date2, HashTable *rece
         transactiontm.tm_min = 0;  // Krata mono mera, mina kai etos (ola ta alla einai 0)
         transactiontm.tm_hour = 0;
         tr = mktime(&transactiontm);   // Metatropi se xrono sustimatos
-        if (lower <= tr <= upper) {
+        if (lower <= tr && tr <= upper)  {
             transactionIDs->add(n->transaction->getTransactionID());
             amount += n->transaction->getValue();
         }
@@ -363,10 +363,9 @@ void findEarnings_date(char *walletID, char *date1, char *date2, HashTable *rece
 }
 
 void findEarnings_full(char *walletID, char *time1, char *date1, char *time2, char *date2, HashTable *receivers) {
-
     Wallet *wallet = receivers->getWallet(walletID);
     if (wallet == NULL) {
-        cout<<"Wallet with id '"<<walletID<<"' doesn't exist. Cannot full findEarnings"<<endl;
+        cout<<"Wallet with id '"<<walletID<<"' has 0 earnings"<<endl;
         return;
     }
 
@@ -379,14 +378,14 @@ void findEarnings_full(char *walletID, char *time1, char *date1, char *time2, ch
     memset(&transactiontm, 0, sizeof(struct tm));
 
     char *fulldate1 = (char *) malloc(strlen(time1) + strlen(date1) + 2);
-    strcpy(fulldate1, time1);
+    strcpy(fulldate1, date1);
     strcat(fulldate1, " ");
-    strcat(fulldate1, date1);
+    strcat(fulldate1, time1);
 
     char *fulldate2 = (char *) malloc(strlen(time2) + strlen(date2) + 2);
-    strcpy(fulldate2, time2);
+    strcpy(fulldate2, date2);
     strcat(fulldate2, " ");
-    strcat(fulldate2, date2);
+    strcat(fulldate2, time2);
 
     strptime(fulldate1, "%d-%m-%Y %R", &lowertm);
     strptime(fulldate2, "%d-%m-%Y %R", &uppertm);
@@ -405,7 +404,7 @@ void findEarnings_full(char *walletID, char *time1, char *date1, char *time2, ch
         }
         transactiontm = n->transaction->getDate(); // Pare tin pliri imerominia
         tr = mktime(&transactiontm);   // Metatropi se xrono sustimatos
-        if (lower <= tr <= upper) {
+        if (lower <= tr && tr <= upper) {
             transactionIDs->add(n->transaction->getTransactionID());
             amount += n->transaction->getValue();
         }
@@ -420,11 +419,39 @@ void findEarnings_full(char *walletID, char *time1, char *date1, char *time2, ch
     delete transactionIDs;
 }
 
+void findEarnings_all(char *walletID, HashTable *receivers) {
+
+    Wallet *wallet = receivers->getWallet(walletID);
+    if (wallet == NULL) {
+        cout<<"Wallet with id '"<<walletID<<"' has 0 earnings"<<endl;
+        return;
+    }
+
+    int amount = 0;
+    StringList *transactionIDs = new StringList();
+    TransactionList *transactions = wallet->getTransaction_list();
+    TransactionList::TransactionNode *n = transactions->getHead();
+    while (n != NULL) {
+        if (n->transaction == NULL) {
+            cout<<"Got a null transaction in findEarnings full"<<endl;
+            break;
+        }
+        transactionIDs->add(n->transaction->getTransactionID());
+        amount += n->transaction->getValue();
+        n = n->next;
+    }
+    cout<<"Total earnings for walletID '"<<walletID<<"' from 'start of time' until 'now': "<<amount<<"$"<<endl;
+    cout<<"Transactions involded: "<<endl;
+    transactionIDs->print();
+    delete transactionIDs;
+
+}
+
 void findPayments_time(char *walletID, char *time1, char *time2, HashTable *senders) {
 
     Wallet *wallet = senders->getWallet(walletID);
     if (wallet == NULL) {
-        cout<<"Wallet with id '"<<walletID<<"' doesn't exist. Cannot time findPayments"<<endl;
+        cout<<"Wallet with id '"<<walletID<<"' has 0 payments"<<endl;
         return;
     }
 
@@ -434,7 +461,6 @@ void findPayments_time(char *walletID, char *time1, char *time2, HashTable *send
     /* Make all struct tms default to 0 */
     memset(&lowertm, 0, sizeof(struct tm));
     memset(&uppertm, 0, sizeof(struct tm));
-    memset(&transactiontm, 0, sizeof(struct tm));
 
     strptime(time1, "%R", &lowertm);
     strptime(time2, "%R", &uppertm);
@@ -452,15 +478,16 @@ void findPayments_time(char *walletID, char *time1, char *time2, HashTable *send
             break;
         }
         transactiontm = n->transaction->getDate(); // Pare tin pliri imerominia
-        transactiontm.tm_mday = 0;  // Krata mono ora kai lepta (ola ta alla einai 0)
-        transactiontm.tm_mon = 0;
-        transactiontm.tm_year = 0;
+        int hour = transactiontm.tm_hour;
+        int min = transactiontm.tm_min;
+        memset(&transactiontm, 0, sizeof(struct tm));
+        transactiontm.tm_hour = hour;// Krata mono ora kai lepta (ola ta alla einai 0)
+        transactiontm.tm_min = min;
         tr = mktime(&transactiontm);   // Metatropi se xrono sustimatos
-        if (lower <= tr <= upper) {
+        if (lower <= tr && tr <= upper) {
             transactionIDs->add(n->transaction->getTransactionID());
             amount += n->transaction->getValue();
         }
-        memset(&transactiontm, 0, sizeof(struct tm));
         n = n->next;
     }
     cout<<"Total payments for walletID '"<<walletID<<"' from '"<<time1<<"' to '"<<time2<<"' :"<<amount<<"$"<<endl;
@@ -474,7 +501,7 @@ void findPayments_date(char *walletID, char *date1, char *date2, HashTable *send
 
     Wallet *wallet = senders->getWallet(walletID);
     if (wallet == NULL) {
-        cout<<"Wallet with id '"<<walletID<<"' doesn't exist. Cannot date findPayments"<<endl;
+        cout<<"Wallet with id '"<<walletID<<"' has 0 payments"<<endl;
         return;
     }
 
@@ -505,7 +532,7 @@ void findPayments_date(char *walletID, char *date1, char *date2, HashTable *send
         transactiontm.tm_min = 0;  // Krata mono mera, mina kai etos (ola ta alla einai 0)
         transactiontm.tm_hour = 0;
         tr = mktime(&transactiontm);   // Metatropi se xrono sustimatos
-        if (lower <= tr <= upper) {
+        if (lower <= tr && tr <= upper) {
             transactionIDs->add(n->transaction->getTransactionID());
             amount += n->transaction->getValue();
         }
@@ -522,7 +549,7 @@ void findPayments_full(char *walletID, char *time1, char *date1, char *time2, ch
 
     Wallet *wallet = senders->getWallet(walletID);
     if (wallet == NULL) {
-        cout<<"Wallet with id '"<<walletID<<"' doesn't exist. Cannot full findPayments"<<endl;
+        cout<<"Wallet with id '"<<walletID<<"' has 0 payments"<<endl;
         return;
     }
 
@@ -535,14 +562,14 @@ void findPayments_full(char *walletID, char *time1, char *date1, char *time2, ch
     memset(&transactiontm, 0, sizeof(struct tm));
 
     char *fulldate1 = (char *) malloc(strlen(time1) + strlen(date1) + 2);
-    strcpy(fulldate1, time1);
+    strcpy(fulldate1, date1);
     strcat(fulldate1, " ");
-    strcat(fulldate1, date1);
+    strcat(fulldate1, time1);
 
     char *fulldate2 = (char *) malloc(strlen(time2) + strlen(date2) + 2);
-    strcpy(fulldate2, time2);
+    strcpy(fulldate2, date2);
     strcat(fulldate2, " ");
-    strcat(fulldate2, date2);
+    strcat(fulldate2, time2);
 
     strptime(fulldate1, "%d-%m-%Y %R", &lowertm);
     strptime(fulldate2, "%d-%m-%Y %R", &uppertm);
@@ -561,7 +588,7 @@ void findPayments_full(char *walletID, char *time1, char *date1, char *time2, ch
         }
         transactiontm = n->transaction->getDate(); // Pare tin pliri imerominia
         tr = mktime(&transactiontm);   // Metatropi se xrono sustimatos
-        if (lower <= tr <= upper) {
+        if (lower <= tr && tr <= upper) {
             transactionIDs->add(n->transaction->getTransactionID());
             amount += n->transaction->getValue();
         }
@@ -573,6 +600,33 @@ void findPayments_full(char *walletID, char *time1, char *date1, char *time2, ch
     transactionIDs->print();
     free(fulldate1);
     free(fulldate2);
+    delete transactionIDs;
+}
+
+void findPayments_all(char *walletID, HashTable *senders) {
+
+    Wallet *wallet = senders->getWallet(walletID);
+    if (wallet == NULL) {
+        cout<<"Wallet with id '"<<walletID<<"' has 0 payments"<<endl;
+        return;
+    }
+
+    int amount = 0;
+    StringList *transactionIDs = new StringList();
+    TransactionList *transactions = wallet->getTransaction_list();
+    TransactionList::TransactionNode *n = transactions->getHead();
+    while (n != NULL) {
+        if (n->transaction == NULL) {
+            cout<<"Got a null transaction in findPayments all"<<endl;
+            break;
+        }
+        transactionIDs->add(n->transaction->getTransactionID());
+        amount += n->transaction->getValue();
+        n = n->next;
+    }
+    cout<<"Total payments for walletID '"<<walletID<<"' from 'start of time' until 'now': "<<amount<<"$"<<endl;
+    cout<<"Transactions involded: "<<endl;
+    transactionIDs->print();
     delete transactionIDs;
 }
 

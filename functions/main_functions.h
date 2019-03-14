@@ -30,11 +30,15 @@ void findEarnings_date(char *walletID, char *date1, char *date2, HashTable *rece
 
 void findEarnings_full(char *walletID, char *time1, char *date1, char *time2, char *date2, HashTable *receivers);
 
+void findEarnings_all(char *walletID, HashTable *receivers);
+
 void findPayments_time(char *walletID, char *time1, char *time2, HashTable *senders);
 
 void findPayments_date(char *walletID, char *date1, char *date2, HashTable *senders);
 
 void findPayments_full(char *walletID, char *time1, char *date1, char *time2, char *date2, HashTable *senders);
+
+void findPayments_all(char *walletID, HashTable *senders);
 
 void walletStatus(char *walletID, HashTable *all_wallets);
 

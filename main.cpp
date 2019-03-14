@@ -9,15 +9,7 @@
 using namespace std;
 int main(int argc, char *argv[]) {
 
-//    char commands[] = "commands.txt";
-//    char command[1024];
-//
-//    while (fgets(command, 1024, stdin) != NULL) {
-//        cout<<"give command"<<endl;
-//        time_t tt = 0;
-//        command_parser(command, new StringList, new HashTable, new HashTable, new HashTable, &tt);
-//        memset(command, 0, 1024);
-//    }
+
 //    return 0;
 
     // TODO change static bitcoins, transactions strings to char *
@@ -51,6 +43,18 @@ int main(int argc, char *argv[]) {
         transaction_parse(buf, trans, all_wallets, sender_wallets, receiver_wallets, &tt);
     }
     close_file(fp);
+
+    /* Commandline */
+    char commands[] = "commands.txt";
+    char command[1024];
+
+    cout<<"Give Command: ";
+    while (fgets(command, 1024, stdin) != NULL) {
+        command_parser(command, trans, all_wallets, sender_wallets, receiver_wallets, &tt);
+        memset(command, 0, 1024);
+        cout<<endl<<"Give Command: ";
+    }
+
 
     /* Thanatos */
     delete all_wallets;
