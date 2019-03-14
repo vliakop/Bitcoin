@@ -21,6 +21,7 @@ private:
     BTLNode *head;
     int size;
 
+public:
     BitcoinTreeList();
 
     ~BitcoinTreeList();

@@ -57,7 +57,7 @@ bool close_file(FILE *fp) {
 }
 
 
-void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringList *bitcoinIDs) {
+void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringList *bitcoinIDs, BitcoinTreeList *btl) {
 
     char *token;
     char delim[] = " \n\r\t";
@@ -73,12 +73,14 @@ void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringLis
         if (bitcoinIDs->contains(token) == false) {
             wallet->addBitcoin(token, bitcoin_value, bitcoin_value);
             bitcoinIDs->add(token);
+            btl->add(token, wallet->getWalletID(), bitcoin_value);
         } else {
             cout<<"Bitcoin with id '"<<token<<"' already exists. Now exiting"<<endl;
             exit(1);
         }
         token = strtok(NULL, delim);
     }
+
     hashTable->add(wallet);
     // TODO PROSOXI: an den ginoun edo delete, prepei na ta kanei delete sto Bucket ta wallets
 }

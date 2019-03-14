@@ -7,6 +7,7 @@ BitcoinTreeList::BTLNode::BTLNode(char *bitcoinID, char *walletID, int value, BT
     this->bitcoinID = (char *) malloc(strlen(bitcoinID) + 1);
     strcpy(this->bitcoinID, bitcoinID);
     this->bitconTree = new Tree(bitcoinID, walletID, value);
+    this->next = next;
 }
 
 BitcoinTreeList::BTLNode::~BTLNode() {
@@ -33,7 +34,7 @@ BitcoinTreeList::~BitcoinTreeList() {
 
 void BitcoinTreeList::add(char *bitcoinID, char *walletID, int bitcoin_value) {
 
-    BTLNode *n = new BTLNode(bitcoinID, walletID, bitcoin_value, head);
+    BTLNode *n = new BTLNode(bitcoinID, walletID, bitcoin_value, this->head);
     head = n;
     size += 1;
 }
