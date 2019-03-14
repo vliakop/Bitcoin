@@ -13,7 +13,8 @@ int main(int argc, char *argv[]) {
 
     while (fgets(command, 1024, stdin) != NULL) {
         cout<<"give command"<<endl;
-        command_parser(command);
+        time_t tt = 0;
+        command_parser(command, new StringList, new HashTable, new HashTable, new HashTable, &tt);
         memset(command, 0, 1024);
     }
     return 0;

@@ -1,6 +1,6 @@
 #pragma once
 
-void command_parser(char *line);
+void command_parser(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date);
 
 void request_transaction_handler(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date);
 

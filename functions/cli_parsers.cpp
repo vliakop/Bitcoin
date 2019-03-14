@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void command_parser(char *line) {
+void command_parser(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date) {
 
     char delim[] = " \t\n\r";
     char *token = strtok(line, delim);
@@ -17,12 +17,12 @@ void command_parser(char *line) {
 
     if (strncmp(token, "requestTransaction", strlen(token)) == 0) {
         token = strtok(NULL, "\n");
-        request_transaction_handler(token);
+        request_transaction_handler(token, trans, all_wallets, senders, receivers, latest_date);
     } else if (strcmp(token, "requestTransactions") == 0) {
         token = strtok(NULL, "\n");
         char *pch = strrchr(line, ';'); // TODO uparxei error sto file logo ';'
         if (pch == NULL) {
-            request_transactions_file_handler(token);
+            request_transactions_file_handler(token, trans, all_wallets, senders, receivers, latest_date);
         } else {
             request_transactions_handler(token);
         }
