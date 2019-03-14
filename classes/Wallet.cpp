@@ -53,6 +53,13 @@ void Wallet::setBitcoin_list(BitcoinList *bitcoin_list) {
     Wallet::bitcoin_list = bitcoin_list;
 }
 
+TransactionList *Wallet::getTransaction_list() const {
+    return transaction_list;
+}
+
+void Wallet::setTransaction_list(TransactionList *transaction_list) {
+    Wallet::transaction_list = transaction_list;
+
 void Wallet::copyBitcoin_list(BitcoinList *bitcoin_list) {
 
     if (bitcoin_list != NULL) {
@@ -90,4 +97,7 @@ bool Wallet::hasID(char *walletID) {
         return true;
     }
     return false;
+}
+
+
 }

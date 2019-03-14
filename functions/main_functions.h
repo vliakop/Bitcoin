@@ -22,3 +22,20 @@ time_t string_to_time_t(char *buf);
 void create_transaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date, StringList *transaction_ids, time_t *latest_date, HashTable *all_wallets, HashTable *senders, HashTable *receivers);
 
 void transfer_coins(Wallet *sender, Wallet *receiver, int value);
+
+void findEarnings_time(char *walletID, char *time1, char *time2, HashTable *receivers);
+
+void findEarnings_date(char *walletID, char *date1, char *date2, HashTable *receivers);
+
+void findEarnings_full(char *walletID, char *time1, char *date1, char *time2, char *date2, HashTable *receivers);
+
+void findPayments_time(char *walletID, char *time1, char *time2, HashTable *senders);
+
+void findPayments_date(char *walletID, char *date1, char *date2, HashTable *senders);
+
+void findPayments_full(char *walletID, char *time1, char *date1, char *time2, char *date2, HashTable *senders);
+
+void walletStatus(char *walletID, HashTable *all_wallets);
+
+
+

@@ -5,7 +5,7 @@
 
 class TransactionList {
 
-private:
+public:
 
     struct TransactionNode{
 
@@ -15,6 +15,8 @@ private:
         TransactionNode(Transaction *transaction, TransactionNode *next = NULL);
         ~TransactionNode();
     };
+
+private:
 
     TransactionNode *head;
     TransactionNode *tail;

@@ -32,6 +32,10 @@ public:
 
     void setBitcoin_list(BitcoinList *bitcoin_list);
 
+    TransactionList *getTransaction_list() const;
+
+    void setTransaction_list(TransactionList *transaction_list);
+
     void copyBitcoin_list(BitcoinList *bitcoin_list);
 
     void addBitcoin(char *bitcoin_id, int value, int denomination);
