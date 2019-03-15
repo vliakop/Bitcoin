@@ -20,11 +20,11 @@ void command_parser(char *line, StringList *trans, HashTable *all_wallets, HashT
         request_transaction_handler(token, trans, all_wallets, senders, receivers, latest_date);
     } else if (strcmp(token, "requestTransactions") == 0) {
         token = strtok(NULL, "\n");
-        char *pch = strchr(line, ';');
+        char *pch = strchr(token, ';');
         if (pch == NULL) {  // Diabazoume apo arxeio
             request_transactions_file_handler(token, trans, all_wallets, senders, receivers, latest_date);
         } else {
-            request_transactions_handler(token);
+            request_transactions_handler(token, trans, all_wallets, senders, receivers, latest_date);
         }
     } else if (strcmp(token, "findEarnings") == 0) {
         token = strtok(NULL, "\n");
@@ -67,15 +67,25 @@ void request_transaction_handler(char *line, StringList *trans, HashTable *all_w
     free(command);
 }
 
-void request_transactions_handler(char *line) {
+void request_transactions_handler(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date) {
 
     if (line == NULL) {
         cout<<"No args for request-transactions command"<<endl;
         return;
     }
 
-    cout<<"requestTransactions "<<line<<endl;
-    //TODO functionality
+    char delims[] = ";";
+    char command[1024];
+    int size;
+    strcpy(command, line);
+    char *token = strtok(command, delims);
+    while (token != NULL) {
+        size = strlen(token);
+        request_transaction_handler(token, trans, all_wallets, senders, receivers, latest_date);
+        strcpy(command, command + size + 1);   // Problima me tin strtok: kaleitai stin epomeni sinartisi
+        token = strtok(command, delims);
+    }
+    cout<<"No more valid request transaction commands given."<<endl;
 }
 
 void request_transactions_file_handler(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date) {
@@ -121,7 +131,7 @@ void find_earnings_handler(char *line, HashTable *receivers) {
 
     token = strtok(NULL, delims);
     if (token == NULL) {
-        findPayments_all(walletID, receivers);
+        findEarnings_all(walletID, receivers);
     } else {
         char *pch = strchr(token, ':');
         if (pch == NULL) {  // year-only search: xreiazomai akoma ena token
@@ -142,7 +152,7 @@ void find_earnings_handler(char *line, HashTable *receivers) {
                 return;
             }
             strncpy(year2, token, 11);
-            findPayments_date(walletID, year1, year2, receivers);
+            findEarnings_date(walletID, year1, year2, receivers);
             return;
         } else {    // exo eite time-only search i full-time search me sugkekrimena dates
             strncpy(time1, token, 6);
@@ -155,7 +165,7 @@ void find_earnings_handler(char *line, HashTable *receivers) {
             if (pch != NULL) {  // time-only search
                 strncpy(time2, token, 6);
                 cout<<"findPayments time "<<time1<<" "<<time2<<endl;
-                findPayments_time(walletID, time1, time2, receivers);
+                findEarnings_time(walletID, time1, time2, receivers);
                 return;
             } else {    // full-time-search
                 strncpy(year1, token, 11);
@@ -171,7 +181,7 @@ void find_earnings_handler(char *line, HashTable *receivers) {
                     return;
                 }
                 strncpy(year2, token, 11);
-                findPayments_full(walletID, time1, year1, time2, year2, receivers);
+                findEarnings_full(walletID, time1, year1, time2, year2, receivers);
                 return;
             }
 

@@ -126,6 +126,7 @@ void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, Ha
     token = strtok(NULL, delim);    // Pare tin aksia se $
     if (token == NULL) {
         cout<<"Value was needed. Now exiting"<<endl;
+        return;
     }
     value = atoi(token);
     if (value < 0) {
