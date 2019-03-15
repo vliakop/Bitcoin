@@ -68,18 +68,18 @@ void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringLis
     char *token;
     char delim[] = " \n\r\t";
 
-    token = strtok(line, delim);
+    token = strtok(line, delim); // Pare to walletID
     if (token == NULL) {
-        cout<<"Error in wallet parsing. No walletId given. Now exiting"<<endl;
+        cout<<"Error in wallet parsing. No walletID given. Now exiting"<<endl;
         exit(1);
     }
-    Wallet *wallet = new Wallet(token);
-    token = strtok(NULL, delim);
-    while (token != NULL) { // Extract all bitcoin ids
-        if (bitcoinIDs->contains(token) == false) {
-            wallet->addBitcoin(token, bitcoin_value, bitcoin_value);
-            bitcoinIDs->add(token);
-            btl->add(token, wallet->getWalletID(), bitcoin_value);
+    Wallet *wallet = new Wallet(token); // Ftiakse to wallet me adeia BitcoinList kai adeia TransactionList
+    token = strtok(NULL, delim);    // Pare to bitcoinID
+    while (token != NULL) { // Oso pairnoume bitcoin
+        if (bitcoinIDs->contains(token) == false) { // An to bitcoinID den xrisimopoieitai
+            wallet->addBitcoin(token, bitcoin_value, bitcoin_value);    // Pros8ese to sto wallet
+            bitcoinIDs->add(token); // Bale to bitcoinID sta kammena
+            btl->add(token, wallet->getWalletID(), bitcoin_value);  // Pros8ese dentro gia to bitcoinID
         } else {
             cout<<"Bitcoin with id '"<<token<<"' already exists. Now exiting"<<endl;
             exit(1);
@@ -236,18 +236,23 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
 
 void transfer_coins(Wallet *sender, Wallet *receiver, int value, Transaction *transaction, BitcoinTreeList *btl) {
 
+    // Prospelasi bitcoin listas
     BitcoinList *sender_coins = sender->getBitcoin_list();
     BitcoinList::BitcoinNode *n = sender_coins->getHead();
 
+    // Oso uparxoun diathesima bitcoins kai exei metaferthei olo to poso
     while (n != NULL && value > 0) {
+        // Ti pososto apo to bitcoin perisseuei
         int denomination = n->bitcoin->getDenomination();
-        if (denomination >= 0) {
+        if (denomination > 0) {
             int transfer;
+            // An to uparxon poso kaluptei to zitoumeno, metefere to zitoumeno
             if (denomination >= value) {
                 transfer = value;
-            } else {
+            } else { // Allios metefere oso exeis
                 transfer = denomination;
             }
+
             // Afairesai to poso pou 8a metafer8ei apo to denomination
             n->bitcoin->setDenomination(denomination - transfer);
 
@@ -268,6 +273,7 @@ void transfer_coins(Wallet *sender, Wallet *receiver, int value, Transaction *tr
     }
 }
 
+// Typonei ta sunolika esoda kai ta transactions pou emplekontai
 void findEarnings_time(char *walletID, char *time1, char *time2, HashTable *receivers) {
 
     Wallet *wallet = receivers->getWallet(walletID);
@@ -284,14 +290,19 @@ void findEarnings_time(char *walletID, char *time1, char *time2, HashTable *rece
     memset(&uppertm, 0, sizeof(struct tm));
     memset(&transactiontm, 0, sizeof(struct tm));
 
+    // Metatropi tou string xronou se struct tm
     strptime(time1, "%R", &lowertm);
     strptime(time2, "%R", &uppertm);
 
+    // Metatropi tou struct tm se time_t
     time_t upper = mktime(&uppertm);
     time_t lower = mktime(&lowertm);
     time_t tr;
 
+    // Lista pou 8a krata ta transactionIDs
     StringList *transactionIDs = new StringList();
+
+    // Prospelasi tis listas me ta transactions
     TransactionList *transactions = wallet->getTransaction_list();
     TransactionList::TransactionNode *n = transactions->getHead();
     while (n != NULL) {
@@ -299,11 +310,14 @@ void findEarnings_time(char *walletID, char *time1, char *time2, HashTable *rece
             cout<<"Got a null transaction in findEarnings time"<<endl;
             break;
         }
+        // Pare to date kai midenise ta pedia pou de xreiazontai sti sugkrisi
         transactiontm = n->transaction->getDate(); // Pare tin pliri imerominia
         transactiontm.tm_mday = 0;  // Krata mono ora kai lepta (ola ta alla einai 0)
         transactiontm.tm_mon = 0;
         transactiontm.tm_year = 0;
         tr = mktime(&transactiontm);   // Metatropi se xrono sustimatos
+
+        // Xronos entos orion
         if (lower <= tr && tr <= upper)  {
             transactionIDs->add(n->transaction->getTransactionID());
             amount += n->transaction->getValue();
@@ -334,14 +348,19 @@ void findEarnings_date(char *walletID, char *date1, char *date2, HashTable *rece
     memset(&uppertm, 0, sizeof(struct tm));
     memset(&transactiontm, 0, sizeof(struct tm));
 
+    // Metatropi tou string xronou se struct t
     strptime(date1, "%d-%m-%Y", &lowertm);
     strptime(date2, "%d-%m-%Y", &uppertm);
 
+    // Metatropi struct tm se time_t
     time_t upper = mktime(&uppertm);
     time_t lower = mktime(&lowertm);
     time_t tr;
 
+    // Lista pou 8a krata ta transactionIDs
     StringList *transactionIDs = new StringList();
+
+    // Prospelasi tis listas me ta transactions
     TransactionList *transactions = wallet->getTransaction_list();
     TransactionList::TransactionNode *n = transactions->getHead();
     while (n != NULL) {
@@ -349,10 +368,13 @@ void findEarnings_date(char *walletID, char *date1, char *date2, HashTable *rece
             cout<<"Got a null transaction in findEarnings time"<<endl;
             break;
         }
+        // Pare to date kai midenise ta pedia pou de xreiazontai sti sugkrisi
         transactiontm = n->transaction->getDate(); // Pare tin pliri imerominia
         transactiontm.tm_min = 0;  // Krata mono mera, mina kai etos (ola ta alla einai 0)
         transactiontm.tm_hour = 0;
         tr = mktime(&transactiontm);   // Metatropi se xrono sustimatos
+
+        // Xronos entos orion
         if (lower <= tr && tr <= upper)  {
             transactionIDs->add(n->transaction->getTransactionID());
             amount += n->transaction->getValue();
@@ -381,24 +403,31 @@ void findEarnings_full(char *walletID, char *time1, char *date1, char *time2, ch
     memset(&uppertm, 0, sizeof(struct tm));
     memset(&transactiontm, 0, sizeof(struct tm));
 
+    //  Dimiourgia ton strings sti morfi date - time
     char *fulldate1 = (char *) malloc(strlen(time1) + strlen(date1) + 2);
     strcpy(fulldate1, date1);
     strcat(fulldate1, " ");
     strcat(fulldate1, time1);
 
+    //  Dimiourgia ton strings sti morfi date - time
     char *fulldate2 = (char *) malloc(strlen(time2) + strlen(date2) + 2);
     strcpy(fulldate2, date2);
     strcat(fulldate2, " ");
     strcat(fulldate2, time2);
 
+    // Metatropi tou string xronou se struct t
     strptime(fulldate1, "%d-%m-%Y %R", &lowertm);
     strptime(fulldate2, "%d-%m-%Y %R", &uppertm);
 
+    // Metatropi struct tm se time_t
     time_t upper = mktime(&uppertm);
     time_t lower = mktime(&lowertm);
     time_t tr;
 
+    // Lista pou 8a krata ta transactionIDs
     StringList *transactionIDs = new StringList();
+
+    // Prospelasi tis listas me ta transactions
     TransactionList *transactions = wallet->getTransaction_list();
     TransactionList::TransactionNode *n = transactions->getHead();
     while (n != NULL) {
@@ -408,6 +437,8 @@ void findEarnings_full(char *walletID, char *time1, char *date1, char *time2, ch
         }
         transactiontm = n->transaction->getDate(); // Pare tin pliri imerominia
         tr = mktime(&transactiontm);   // Metatropi se xrono sustimatos
+
+        // Xronos entos orion
         if (lower <= tr && tr <= upper) {
             transactionIDs->add(n->transaction->getTransactionID());
             amount += n->transaction->getValue();
@@ -432,7 +463,10 @@ void findEarnings_all(char *walletID, HashTable *receivers) {
     }
 
     int amount = 0;
+    // Lista pou 8a krata ta transactionIDs
     StringList *transactionIDs = new StringList();
+
+    // Prospelasi tis listas me ta transactions: kratame ola ta transactions
     TransactionList *transactions = wallet->getTransaction_list();
     TransactionList::TransactionNode *n = transactions->getHead();
     while (n != NULL) {
@@ -466,14 +500,19 @@ void findPayments_time(char *walletID, char *time1, char *time2, HashTable *send
     memset(&lowertm, 0, sizeof(struct tm));
     memset(&uppertm, 0, sizeof(struct tm));
 
+    // Metatropi tou string xronou se struct t
     strptime(time1, "%R", &lowertm);
     strptime(time2, "%R", &uppertm);
 
+    // Metatropi struct tm se time_t
     time_t upper = mktime(&uppertm);
     time_t lower = mktime(&lowertm);
     time_t tr;
 
+    // Lista pou 8a krata ta transactionIDs
     StringList *transactionIDs = new StringList();
+
+    // Prospelasi tis listas me ta transactions
     TransactionList *transactions = wallet->getTransaction_list();
     TransactionList::TransactionNode *n = transactions->getHead();
     while (n != NULL) {
@@ -481,6 +520,7 @@ void findPayments_time(char *walletID, char *time1, char *time2, HashTable *send
             cout<<"Got a null transaction in findPayments time"<<endl;
             break;
         }
+        // Pare to date kai midenise ta pedia pou de xreiazontai sti sugkrisi
         transactiontm = n->transaction->getDate(); // Pare tin pliri imerominia
         int hour = transactiontm.tm_hour;
         int min = transactiontm.tm_min;
@@ -488,6 +528,8 @@ void findPayments_time(char *walletID, char *time1, char *time2, HashTable *send
         transactiontm.tm_hour = hour;// Krata mono ora kai lepta (ola ta alla einai 0)
         transactiontm.tm_min = min;
         tr = mktime(&transactiontm);   // Metatropi se xrono sustimatos
+
+        // Xronos entos orion
         if (lower <= tr && tr <= upper) {
             transactionIDs->add(n->transaction->getTransactionID());
             amount += n->transaction->getValue();
@@ -517,14 +559,19 @@ void findPayments_date(char *walletID, char *date1, char *date2, HashTable *send
     memset(&uppertm, 0, sizeof(struct tm));
     memset(&transactiontm, 0, sizeof(struct tm));
 
+    // Metatropi tou string xronou se struct t
     strptime(date1, "%d-%m-%Y", &lowertm);
     strptime(date2, "%d-%m-%Y", &uppertm);
 
+    // Metatropi struct tm se time_t
     time_t upper = mktime(&uppertm);
     time_t lower = mktime(&lowertm);
     time_t tr;
 
+    // Lista pou 8a krata ta transactionIDs
     StringList *transactionIDs = new StringList();
+
+    // Prospelasi tis listas me ta transactions
     TransactionList *transactions = wallet->getTransaction_list();
     TransactionList::TransactionNode *n = transactions->getHead();
     while (n != NULL) {
@@ -532,10 +579,13 @@ void findPayments_date(char *walletID, char *date1, char *date2, HashTable *send
             cout<<"Got a null transaction in findPayments time"<<endl;
             break;
         }
+        // Pare to date kai midenise ta pedia pou de xreiazontai sti sugkrisi
         transactiontm = n->transaction->getDate(); // Pare tin pliri imerominia
         transactiontm.tm_min = 0;  // Krata mono mera, mina kai etos (ola ta alla einai 0)
         transactiontm.tm_hour = 0;
         tr = mktime(&transactiontm);   // Metatropi se xrono sustimatos
+
+        // Xronos entos orion
         if (lower <= tr && tr <= upper) {
             transactionIDs->add(n->transaction->getTransactionID());
             amount += n->transaction->getValue();
@@ -565,24 +615,31 @@ void findPayments_full(char *walletID, char *time1, char *date1, char *time2, ch
     memset(&uppertm, 0, sizeof(struct tm));
     memset(&transactiontm, 0, sizeof(struct tm));
 
+    //  Dimiourgia ton strings sti morfi date - time
     char *fulldate1 = (char *) malloc(strlen(time1) + strlen(date1) + 2);
     strcpy(fulldate1, date1);
     strcat(fulldate1, " ");
     strcat(fulldate1, time1);
 
+    //  Dimiourgia ton strings sti morfi date - time
     char *fulldate2 = (char *) malloc(strlen(time2) + strlen(date2) + 2);
     strcpy(fulldate2, date2);
     strcat(fulldate2, " ");
     strcat(fulldate2, time2);
 
+    // Metatropi tou string xronou se struct t
     strptime(fulldate1, "%d-%m-%Y %R", &lowertm);
     strptime(fulldate2, "%d-%m-%Y %R", &uppertm);
 
+    // Metatropi struct tm se time_t
     time_t upper = mktime(&uppertm);
     time_t lower = mktime(&lowertm);
     time_t tr;
 
+    // Lista pou 8a krata ta transactionIDs
     StringList *transactionIDs = new StringList();
+
+    // Prospelasi tis listas me ta transactions
     TransactionList *transactions = wallet->getTransaction_list();
     TransactionList::TransactionNode *n = transactions->getHead();
     while (n != NULL) {
@@ -592,6 +649,8 @@ void findPayments_full(char *walletID, char *time1, char *date1, char *time2, ch
         }
         transactiontm = n->transaction->getDate(); // Pare tin pliri imerominia
         tr = mktime(&transactiontm);   // Metatropi se xrono sustimatos
+
+        // Xronos entos orion
         if (lower <= tr && tr <= upper) {
             transactionIDs->add(n->transaction->getTransactionID());
             amount += n->transaction->getValue();
@@ -616,7 +675,11 @@ void findPayments_all(char *walletID, HashTable *senders) {
     }
 
     int amount = 0;
+
+    // Lista pou 8a krata ta transactionIDs
     StringList *transactionIDs = new StringList();
+
+    // Prospelasi tis listas me ta transactions: kratame ola ta transactions
     TransactionList *transactions = wallet->getTransaction_list();
     TransactionList::TransactionNode *n = transactions->getHead();
     while (n != NULL) {
@@ -636,6 +699,7 @@ void findPayments_all(char *walletID, HashTable *senders) {
 
 void walletStatus(char *walletID, HashTable *all_wallets) {
 
+    // Anazitisi tou walletID sto allWallets
     Wallet *wallet = all_wallets->getWallet(walletID);
     if (wallet == NULL) {
         cout<<"Wallet with id '"<<walletID<<"' doesn't exist. Cannot walletStatus"<<endl;
@@ -647,14 +711,14 @@ void walletStatus(char *walletID, HashTable *all_wallets) {
 void bitcoinStatus(char *bitcoinID, BitcoinTreeList *btl) {
 
     int number_of_transaction = btl->getTransactions(bitcoinID);
-    int unspent = btl->xrisi_avgi(bitcoinID);
+    int unspent = btl->xrisi_avgi(bitcoinID);   // Epistrefei to poso tou pio deksia fullou
     cout<<bitcoinID<<" "<<number_of_transaction<<" "<<unspent<<endl;
 }
 
 void tracecoin(char *bitcoinID, BitcoinTreeList *btl) {
 
-    TransactionList *transactionList = new TransactionList();
-    btl->tracecoin(bitcoinID, transactionList);// TODO prosoxi. 8elo na antigrafontai ta transactions
+    TransactionList *transactionList = new TransactionList();   // I lista arxikopoieitai apo tin tracecoin
+    btl->tracecoin(bitcoinID, transactionList);
     cout<<"bitcoin '"<<bitcoinID<<"' is involved in "<<transactionList->getSize()<<" transactions:"<<endl;
     transactionList->print();
     delete transactionList;

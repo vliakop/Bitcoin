@@ -17,7 +17,15 @@ Tree::TreeNode::TreeNode(char *walletID, int value, int depth, Transaction *tran
     right = NULL;
 }
 
-Tree::TreeNode::~TreeNode() {;}
+Tree::TreeNode::~TreeNode() {
+
+    if (left != NULL){
+        delete left;
+    }
+    if (right != NULL) {
+        delete right;
+    }
+}
 
 Tree::Tree(char *bitcoinID, char *walletID, int value) {
 
@@ -28,7 +36,9 @@ Tree::Tree(char *bitcoinID, char *walletID, int value) {
 }
 
 Tree::~Tree() {
-    //TODO destructor
+
+    free(bitcoinID);
+    delete root;
 }
 
 int Tree::TreeNode::add(int value, Transaction *transaction, int *new_transactions) {
@@ -50,12 +60,12 @@ int Tree::TreeNode::add(int value, Transaction *transaction, int *new_transactio
                 this->right = new TreeNode(sender, this->value - value, this->depth + 1, transaction);  // Posa emeinan ston sender
                 this->children++;
             }
-            *new_transactions = *new_transactions + 1;
+            *new_transactions = *new_transactions + 1;  // Auksisi ton sunolikon transactions tou bitcoin
             return remainder;
-        } else {
+        } else { // An uparxoun paidia
             if (this->left != NULL) {
-                done = left->add(value, transaction, new_transactions);
-                if (done > 0) {
+                done = left->add(value, transaction, new_transactions); // Dokimase na baleis aristera
+                if (done > 0) { // An uparxei ypoloipom dokimase deksia
                     if (this->right != NULL) {
                         done = right->add(done, transaction, new_transactions);
                     }
@@ -63,9 +73,9 @@ int Tree::TreeNode::add(int value, Transaction *transaction, int *new_transactio
             }
         }
     } else { // An den eimai o kombos pou psaxneis
-        if (this->left != NULL) {
+        if (this->left != NULL) { // Dokimase na baleis aristera
             done = left->add(value, transaction, new_transactions);
-            if (done > 0) {
+            if (done > 0) { // An uparxei ypoloipom dokimase deksia
                 if (this->right != NULL) {
                     done = right->add(done, transaction, new_transactions);
                 }
@@ -88,9 +98,9 @@ int Tree::getTotalTransaction() {
 
 int Tree::TreeNode::xrisi_avgi() {
 
-    if (children == 0) {
+    if (children == 0) {    // An einai fullo epestrepse to value
         return value;
-    }  else if (children == 1) {    // An yparxei ena paidi 8a einai to aristero poy simainei oti to unspent exei teleiosei
+    }  else if (children == 1) {    // An yparxei ena paidi 8a einai to aristero poy simainei oti to unspent einai 0
         return  0;
     } else {
         return right->xrisi_avgi();

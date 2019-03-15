@@ -62,6 +62,7 @@ int BitcoinTreeList::getTransactions(char *bitcoinID) {
     return 0;
 }
 
+// Epistrefei to value pou exei to pio deksi fullo
 int BitcoinTreeList::xrisi_avgi(char *bitcoinID) {
 
     BTLNode *n = head;
@@ -74,6 +75,7 @@ int BitcoinTreeList::xrisi_avgi(char *bitcoinID) {
     return 0;
 }
 
+// Prosthetei eggrafes stin transactionList
 void BitcoinTreeList::tracecoin(char *bitcoinID, TransactionList *transactionList) {
 
     BTLNode *n = head;

@@ -1,6 +1,6 @@
 #pragma once
 
-
+extern int bucket_size;
 #include "Wallet.h"
 
 class Bucket {

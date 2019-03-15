@@ -39,6 +39,7 @@ unsigned long HashTable::hash(char *str) {
     return hash;
 }
 
+
 bool HashTable::contains(Wallet *wallet) {
 
     char *walletID = wallet->getWalletID();

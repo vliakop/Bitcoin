@@ -69,16 +69,19 @@ void Wallet::copyBitcoin_list(BitcoinList *bitcoin_list) {
     this->bitcoin_list = new BitcoinList(bitcoin_list);
 }
 
+// Eisagei bitcoin sto bitcoinlist i enimeronei to uparxoun
 void Wallet::addBitcoin(char *bitcoin_id, int value, int denomination) {
 
+    // An to bicoinID uparxei, enimeronetai to poso
     if (bitcoin_list->contains(bitcoin_id)) {
         bitcoin_list->update_coin(bitcoin_id, denomination);
-    } else {
+    } else {    // Allios eisagetai neo bitcoin
         bitcoin_list->add(bitcoin_id, value, denomination);
     }
     balance += denomination;
 }
 
+// Eisagei transaction sto transactionlist
 Transaction* Wallet::addTransaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date) {
 
     return transaction_list->add(new Transaction(transaction_id, sender_id, receiver_id, value, date));

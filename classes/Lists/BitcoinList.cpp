@@ -70,11 +70,12 @@ void BitcoinList::setSize(int size) {
     this->size = size;
 }
 
+
 bool BitcoinList::add(char *bitcoin_id, int bitcoin_value, int denomination) {
 
-    if (size == 0) {
+    if (size == 0) { // An i lista einai adeia pros8iki stin arxi
         head = tail = new BitcoinList::BitcoinNode(bitcoin_id, bitcoin_value, denomination);
-    } else {
+    } else {    // An den einai adeia, pros8iki sto telos
         BitcoinList::BitcoinNode *n = new BitcoinList::BitcoinNode(bitcoin_id, bitcoin_value, denomination);
         tail->next = n;
         tail = n;
@@ -87,7 +88,9 @@ void BitcoinList::update_coin(char *bitcoin_id, int denomination) {
 
     BitcoinList::BitcoinNode *n = head;
     while (n != NULL) {
+        // An bre8ike to bitcoinID
         if (strcmp(n->bitcoin->getBitcoin_id(), bitcoin_id) == 0) {
+            // Auksise to pososto pou apomenei
             n->bitcoin->setDenomination(n->bitcoin->getDenomination() + denomination);
             if (n->bitcoin->getDenomination() > n->bitcoin->getValue()) {
                 cout<<"Bitcoin denomination shouldnt be higher than value"<<endl;

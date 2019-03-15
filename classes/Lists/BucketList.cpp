@@ -57,7 +57,7 @@ void BucketList::setSize(int size) {
 void BucketList::addWallet(Wallet *wallet) {
 
     if (size == 0) {    // An den yparxei BucketNode, dimiourgise ena
-        head = tail = new BucketList::BucketNode();
+        head = tail = new BucketList::BucketNode(bucket_size);
         size += 1;
     } else {            // Diaforetika
         if (tail->bucket->isFull()) {   // An o teleutaios sti lista einai adeios

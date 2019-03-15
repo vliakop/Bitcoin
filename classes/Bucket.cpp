@@ -17,6 +17,13 @@ Bucket::Bucket(int byte_size, int record_size) {
 Bucket::~Bucket() {
 
     if (array != NULL) {
+        Wallet *w = NULL;
+
+        // Prospelasi ton eggrafon
+        for (int i = 0; i < records; i++) {
+            memcpy(&w, array + i * record_size, sizeof(Wallet *));
+            delete w;
+        }
         free(array);
     }
 }
@@ -26,18 +33,18 @@ void Bucket::addRecord(Wallet *record) {
     if (records == record_capacity) {
         return;
     }
+    // Pros8iki stin proti eleu8eri 8esi
     memcpy(array + records*record_size, &record, sizeof(Wallet*));
     records += 1;
 }
 
 void Bucket::print() {
 
-    cout<<"BUCKET PRINTING '"<<records<<"' records"<<endl;
+    cout<<"Printing Bucket '"<<records<<"' records"<<endl;
     Wallet *w;
     for (int i = 0; i < records; i++) {
         memcpy(&w, array + i*record_size, sizeof(Wallet*));
         if(w == NULL) {
-            cout<<"HUSTON WE HAVE A PROBLEM"<<endl;
             return;
         }
         w->print();
@@ -55,6 +62,8 @@ bool Bucket::isFull() {
 bool Bucket::contains(char *walletID) {
 
     Wallet *w;
+
+    // Prospelasi ton eggrafon
     for (int i = 0; i < records; i++) {
         memcpy(&w, array + i*record_size, sizeof(Wallet*));
         if (w->hasID(walletID)) {
@@ -67,6 +76,8 @@ bool Bucket::contains(char *walletID) {
 Wallet* Bucket::getWallet(char *walletID) {
 
     Wallet *w = NULL;
+
+    // Prospelasi ton eggrafon
     for (int i = 0; i < records; i++) {
         memcpy(&w, array + i*record_size, sizeof(Wallet*));
         if (w->hasID(walletID)) {

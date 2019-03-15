@@ -12,7 +12,7 @@ private:
 
 public:
 
-    HashTable(unsigned long size = 5); // TODO change to 97
+    HashTable(unsigned long size = 5);
 
     ~HashTable();
 
