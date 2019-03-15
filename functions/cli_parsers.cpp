@@ -40,7 +40,7 @@ void command_parser(char *line, StringList *trans, HashTable *all_wallets, HashT
         bitcoin_status_handler(token, btl);
     } else if(strcmp(token, "traceCoin") == 0) {
         token = strtok(NULL, "\n");
- //       tracecoin_status_handler(token, btl);
+        tracecoin_status_handler(token, btl);
     } else if (strcmp(token, "exit") == 0) {
         // TODO handle
     } else {
@@ -303,7 +303,7 @@ void bitcoin_status_handler(char *line, BitcoinTreeList *btl) {
     bitcoinStatus(token, btl);
 }
 
-void tracecoin_status_handler(char *line) {
+void tracecoin_status_handler(char *line, BitcoinTreeList *btl) {
 
     if (line == NULL) {
         cout<<"No args for tracecoin-status command"<<endl;
@@ -311,5 +311,10 @@ void tracecoin_status_handler(char *line) {
     }
 
     cout<<"traceCoin "<<line<<endl;
-    //TODO functionality
+    char *token = strtok(line, " \r\n\t");
+    if (token == NULL) {
+        cout<<"Expected bitcoinID as argument but none given."<<endl;
+        return;
+    }
+    tracecoin(token, btl);
 }

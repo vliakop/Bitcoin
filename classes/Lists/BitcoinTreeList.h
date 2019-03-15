@@ -3,6 +3,7 @@
 
 #include "../Transaction.h"
 #include "../Tree/Tree.h"
+#include "TransactionList.h"
 
 class BitcoinTreeList {
 
@@ -33,5 +34,9 @@ public:
     int getTransactions(char *bitcoinID);
 
     int xrisi_avgi(char *bitcoinID);
+
+    void tracecoin(char *bitcoinID, TransactionList *transactionList);
+
+    int getSize();
 };
 

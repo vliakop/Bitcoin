@@ -41,5 +41,9 @@ public:
     void setSize(int size);
 
     Transaction* add(Transaction *transaction);
+
+    bool contains(Transaction *transaction);
+
+    void print();
 };
 

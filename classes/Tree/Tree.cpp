@@ -101,3 +101,24 @@ int Tree::xrisi_avgi() {
 
     return root->xrisi_avgi();
 }
+
+// Gemizei tin transactionList me monadika transactions
+void Tree::TreeNode::tracecoin(TransactionList *transactionList) {
+
+    if (depth != 0) {  // I rize den prokyptei apo transaction
+        if (transactionList->contains(this->transaction) == false) {
+            transactionList->add(transaction);
+        }
+    }
+    if (left != NULL){
+        left->tracecoin(transactionList);
+    }
+    if (right != NULL) {
+        right->tracecoin(transactionList);
+    }
+}
+
+void Tree::tracecoin(TransactionList *transactionList) {
+
+    root->tracecoin(transactionList);
+}

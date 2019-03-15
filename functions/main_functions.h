@@ -43,4 +43,6 @@ void walletStatus(char *walletID, HashTable *all_wallets);
 
 void bitcoinStatus(char *bitcoinID, BitcoinTreeList *btl);
 
+void tracecoin(char *bitcoinID, BitcoinTreeList *btl);
+
 

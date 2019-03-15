@@ -1,3 +1,4 @@
+#include <cstring>
 #include "TransactionList.h"
 
 TransactionList::TransactionNode::TransactionNode(Transaction *transaction, TransactionList::TransactionNode *next) {
@@ -79,4 +80,30 @@ Transaction* TransactionList::add(Transaction *transaction) {
     }
     size += 1;
     return tail->transaction;
+}
+
+bool TransactionList::contains(Transaction *transaction) {
+
+    if (size == 0) {
+        return false;
+    } else {
+        TransactionNode *n = head;
+        while (n != NULL) {
+            if (strcmp(transaction->getTransactionID(), n->transaction->getTransactionID()) == 0) {
+                return true;
+            }
+            n = n->next;
+        }
+        return false;
+    }
+
+}
+
+void TransactionList::print() {
+
+    TransactionNode *n = head;
+    while (n != NULL){
+        n->transaction->print();
+        n = n->next;
+    }
 }

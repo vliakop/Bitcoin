@@ -73,3 +73,21 @@ int BitcoinTreeList::xrisi_avgi(char *bitcoinID) {
     }
     return 0;
 }
+
+void BitcoinTreeList::tracecoin(char *bitcoinID, TransactionList *transactionList) {
+
+    BTLNode *n = head;
+    while (n != NULL) {
+        if (strcmp(n->bitcoinID, bitcoinID) == 0) {
+            n->bitconTree->tracecoin(transactionList);
+            break;
+        }
+        n = n->next;
+    }
+}
+
+int BitcoinTreeList::getSize() {
+
+    return size;
+}
+

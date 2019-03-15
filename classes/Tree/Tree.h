@@ -2,6 +2,7 @@
 
 
 #include "../Transaction.h"
+#include "../Lists/TransactionList.h"
 
 class Tree {
 
@@ -22,6 +23,7 @@ public:
 
         int add(int value, Transaction* transaction, int *new_transactions);
         int xrisi_avgi();
+        void tracecoin(TransactionList *transactionList);
     };
 
 private:
@@ -40,6 +42,8 @@ public:
     void addTransaction(int value, Transaction *transaction);
 
     int xrisi_avgi();
+
+    void tracecoin(TransactionList *transactionList);
 
 };
 

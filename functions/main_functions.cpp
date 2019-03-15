@@ -650,3 +650,12 @@ void bitcoinStatus(char *bitcoinID, BitcoinTreeList *btl) {
     int unspent = btl->xrisi_avgi(bitcoinID);
     cout<<bitcoinID<<" "<<number_of_transaction<<" "<<unspent<<endl;
 }
+
+void tracecoin(char *bitcoinID, BitcoinTreeList *btl) {
+
+    TransactionList *transactionList = new TransactionList();
+    btl->tracecoin(bitcoinID, transactionList);// TODO prosoxi. 8elo na antigrafontai ta transactions
+    cout<<"bitcoin '"<<bitcoinID<<"' is involved in "<<transactionList->getSize()<<" transactions:"<<endl;
+    transactionList->print();
+    delete transactionList;
+}
