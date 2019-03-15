@@ -33,6 +33,7 @@ Tree::~Tree() {
 
 int Tree::TreeNode::add(int value, Transaction *transaction, int *new_transactions) {
 
+    int done = value;
     char *sender = transaction->getSenderWalletID();
     char *receiver = transaction->getReceiverWalletID();
 
@@ -53,7 +54,7 @@ int Tree::TreeNode::add(int value, Transaction *transaction, int *new_transactio
             return remainder;
         } else {
             if (this->left != NULL) {
-                int done = left->add(value, transaction, new_transactions);
+                done = left->add(value, transaction, new_transactions);
                 if (done > 0) {
                     if (this->right != NULL) {
                         done = right->add(done, transaction, new_transactions);
@@ -63,7 +64,7 @@ int Tree::TreeNode::add(int value, Transaction *transaction, int *new_transactio
         }
     } else { // An den eimai o kombos pou psaxneis
         if (this->left != NULL) {
-            int done = left->add(value, transaction, new_transactions);
+            done = left->add(value, transaction, new_transactions);
             if (done > 0) {
                 if (this->right != NULL) {
                     done = right->add(done, transaction, new_transactions);
@@ -71,10 +72,32 @@ int Tree::TreeNode::add(int value, Transaction *transaction, int *new_transactio
             }
         }
     }
+    return done;
 }
 
 
 void Tree::addTransaction(int value, Transaction *transaction) {
 
     root->add(value, transaction, &total_transaction);
+}
+
+
+int Tree::getTotalTransaction() {
+    return total_transaction;
+}
+
+int Tree::TreeNode::xrisi_avgi() {
+
+    if (children == 0) {
+        return value;
+    }  else if (children == 1) {    // An yparxei ena paidi 8a einai to aristero poy simainei oti to unspent exei teleiosei
+        return  0;
+    } else {
+        return right->xrisi_avgi();
+    }
+}
+
+int Tree::xrisi_avgi() {
+
+    return root->xrisi_avgi();
 }

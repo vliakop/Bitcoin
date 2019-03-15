@@ -49,3 +49,27 @@ void BitcoinTreeList::addTransaction(char *bitcoinID, Transaction *transaction) 
         n = n->next;
     }
 }
+
+int BitcoinTreeList::getTransactions(char *bitcoinID) {
+
+    BTLNode *n = head;
+    while (n != NULL) {
+        if (strcmp(n->bitcoinID, bitcoinID) == 0) {
+            return n->bitconTree->getTotalTransaction();
+        }
+        n = n->next;
+    }
+    return 0;
+}
+
+int BitcoinTreeList::xrisi_avgi(char *bitcoinID) {
+
+    BTLNode *n = head;
+    while (n != NULL) {
+        if (strcmp(n->bitcoinID, bitcoinID) == 0) {
+            return n->bitconTree->xrisi_avgi();
+        }
+        n = n->next;
+    }
+    return 0;
+}

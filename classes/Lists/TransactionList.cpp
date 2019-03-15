@@ -67,7 +67,8 @@ void TransactionList::setSize(int size) {
 }
 
 
-void TransactionList::add(Transaction *transaction) {
+Transaction* TransactionList::add(Transaction *transaction) {
+
 
     if (size == 0) {
         head = tail = new TransactionList::TransactionNode(transaction);
@@ -77,4 +78,5 @@ void TransactionList::add(Transaction *transaction) {
         tail = n;
     }
     size += 1;
+    return tail->transaction;
 }

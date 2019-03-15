@@ -40,7 +40,7 @@ public:
 
     void addBitcoin(char *bitcoin_id, int value, int denomination);
 
-    void addTransaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date);
+    Transaction* addTransaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date);
 
     void print();
 

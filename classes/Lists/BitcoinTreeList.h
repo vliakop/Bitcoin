@@ -29,5 +29,9 @@ public:
     void add(char *bitcoinID, char *walletID, int bitcoin_value);
 
     void addTransaction(char *bitcoinID, Transaction *transaction);
+
+    int getTransactions(char *bitcoinID);
+
+    int xrisi_avgi(char *bitcoinID);
 };
 

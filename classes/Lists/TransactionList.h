@@ -40,6 +40,6 @@ public:
 
     void setSize(int size);
 
-    void add(Transaction *transaction);
+    Transaction* add(Transaction *transaction);
 };
 

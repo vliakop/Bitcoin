@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void command_parser(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date) {
+void command_parser(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date, BitcoinTreeList *btl) {
 
     char delim[] = " \t\n\r";
     char *token = strtok(line, delim);
@@ -17,14 +17,14 @@ void command_parser(char *line, StringList *trans, HashTable *all_wallets, HashT
 
     if (strncmp(token, "requestTransaction", strlen(token)) == 0) {
         token = strtok(NULL, "\n");
-        request_transaction_handler(token, trans, all_wallets, senders, receivers, latest_date);
+        request_transaction_handler(token, trans, all_wallets, senders, receivers, latest_date, btl);
     } else if (strcmp(token, "requestTransactions") == 0) {
         token = strtok(NULL, "\n");
         char *pch = strchr(token, ';');
         if (pch == NULL) {  // Diabazoume apo arxeio
-            request_transactions_file_handler(token, trans, all_wallets, senders, receivers, latest_date);
+            request_transactions_file_handler(token, trans, all_wallets, senders, receivers, latest_date, btl);
         } else {
-            request_transactions_handler(token, trans, all_wallets, senders, receivers, latest_date);
+            request_transactions_handler(token, trans, all_wallets, senders, receivers, latest_date, btl);
         }
     } else if (strcmp(token, "findEarnings") == 0) {
         token = strtok(NULL, "\n");
@@ -35,12 +35,12 @@ void command_parser(char *line, StringList *trans, HashTable *all_wallets, HashT
     } else if(strcmp(token, "walletStatus") == 0) {
         token = strtok(NULL, "\n");
         wallet_status_handler(token, all_wallets);
-    } else if(strcmp(token, "bitcoinStatus") == 0) {
+    } else if(strcmp(token, "bitCoinStatus") == 0) {
         token = strtok(NULL, "\n");
-        bitcoin_status_handler(token);
+        bitcoin_status_handler(token, btl);
     } else if(strcmp(token, "traceCoin") == 0) {
         token = strtok(NULL, "\n");
-        tracecoin_status_handler(token);
+ //       tracecoin_status_handler(token, btl);
     } else if (strcmp(token, "exit") == 0) {
         // TODO handle
     } else {
@@ -48,7 +48,7 @@ void command_parser(char *line, StringList *trans, HashTable *all_wallets, HashT
     }
 }
 
-void request_transaction_handler(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date) {
+void request_transaction_handler(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date, BitcoinTreeList *btl) {
 
     if (line == NULL) {
         cout<<"No args for request-transaction command"<<endl;
@@ -63,11 +63,11 @@ void request_transaction_handler(char *line, StringList *trans, HashTable *all_w
     strcpy(command, transaction_id);
     strcat(command, " ");
     strcat(command, line);
-    transaction_parse(command, trans, all_wallets, senders, receivers, latest_date);
+    transaction_parse(command, trans, all_wallets, senders, receivers, latest_date, btl);
     free(command);
 }
 
-void request_transactions_handler(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date) {
+void request_transactions_handler(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date, BitcoinTreeList *btl) {
 
     if (line == NULL) {
         cout<<"No args for request-transactions command"<<endl;
@@ -81,14 +81,14 @@ void request_transactions_handler(char *line, StringList *trans, HashTable *all_
     char *token = strtok(command, delims);
     while (token != NULL) {
         size = strlen(token);
-        request_transaction_handler(token, trans, all_wallets, senders, receivers, latest_date);
+        request_transaction_handler(token, trans, all_wallets, senders, receivers, latest_date, btl);
         strcpy(command, command + size + 1);   // Problima me tin strtok: kaleitai stin epomeni sinartisi
         token = strtok(command, delims);
     }
     cout<<"No more valid request transaction commands given."<<endl;
 }
 
-void request_transactions_file_handler(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date) {
+void request_transactions_file_handler(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date, BitcoinTreeList *btl) {
 
     if (line == NULL) {
         cout<<"No args for request-transactions-file command"<<endl;
@@ -102,7 +102,7 @@ void request_transactions_file_handler(char *line, StringList *trans, HashTable 
     char buf[1024];
     while (fgets(buf, 1024, f) != NULL) {
         token = strtok(buf, ";");
-        request_transaction_handler(token, trans, all_wallets, senders, receivers, latest_date);
+        request_transaction_handler(token, trans, all_wallets, senders, receivers, latest_date, btl);
     }
 }
 
@@ -287,7 +287,7 @@ void wallet_status_handler(char *line, HashTable *all_wallets) {
     //TODO functionality
 }
 
-void bitcoin_status_handler(char *line) {
+void bitcoin_status_handler(char *line, BitcoinTreeList *btl) {
 
     if (line == NULL) {
         cout<<"No args for bitcoin-status command"<<endl;
@@ -295,7 +295,12 @@ void bitcoin_status_handler(char *line) {
     }
 
     cout<<"bitcoinStatus "<<line<<endl;
-    //TODO functionality
+    char *token = strtok(line, " \r\n\t");
+    if (token == NULL) {
+        cout<<"Expected bitcoinID as argument but none given."<<endl;
+        return;
+    }
+    bitcoinStatus(token, btl);
 }
 
 void tracecoin_status_handler(char *line) {

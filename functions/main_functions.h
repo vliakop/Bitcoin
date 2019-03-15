@@ -14,15 +14,14 @@ bool close_file(FILE *fp);
 
 time_t string_to_time_t(char *buf);
 
-int mydifftime(struct tm tm1, struct tm tm2);
 
 void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringList *bitcoinIDs, BitcoinTreeList *btl);
 
-void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date);
+void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date, BitcoinTreeList *btl);
 
-void create_transaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date, StringList *transaction_ids, time_t *latest_date, HashTable *all_wallets, HashTable *senders, HashTable *receivers);
+void create_transaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date, StringList *transaction_ids, time_t *latest_date, HashTable *all_wallets, HashTable *senders, HashTable *receivers, BitcoinTreeList *btl);
 
-void transfer_coins(Wallet *sender, Wallet *receiver, int value);
+void transfer_coins(Wallet *sender, Wallet *receiver, int value, Transaction *transaction, BitcoinTreeList *btl);
 
 void findEarnings_time(char *walletID, char *time1, char *time2, HashTable *receivers);
 
@@ -42,5 +41,6 @@ void findPayments_all(char *walletID, HashTable *senders);
 
 void walletStatus(char *walletID, HashTable *all_wallets);
 
+void bitcoinStatus(char *bitcoinID, BitcoinTreeList *btl);
 
 

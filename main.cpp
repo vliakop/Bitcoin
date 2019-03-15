@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     memset(&tt, 0, sizeof(time_t));
     fp = open_file(transactions);
     while (fgets(buf, 512, fp) != NULL) {
-        transaction_parse(buf, trans, all_wallets, sender_wallets, receiver_wallets, &tt);
+        transaction_parse(buf, trans, all_wallets, sender_wallets, receiver_wallets, &tt, btl);
     }
     close_file(fp);
 
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 
     cout<<"Give Command: ";
     while (fgets(command, 1024, stdin) != NULL) {
-        command_parser(command, trans, all_wallets, sender_wallets, receiver_wallets, &tt);
+        command_parser(command, trans, all_wallets, sender_wallets, receiver_wallets, &tt, btl);
         memset(command, 0, 1024);
         cout<<endl<<"Give Command: ";
     }

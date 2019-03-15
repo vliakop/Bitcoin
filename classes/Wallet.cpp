@@ -79,9 +79,9 @@ void Wallet::addBitcoin(char *bitcoin_id, int value, int denomination) {
     balance += denomination;
 }
 
-void Wallet::addTransaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date) {
+Transaction* Wallet::addTransaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date) {
 
-    transaction_list->add(new Transaction(transaction_id, sender_id, receiver_id, value, date));
+    return transaction_list->add(new Transaction(transaction_id, sender_id, receiver_id, value, date));
 }
 
 

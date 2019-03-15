@@ -21,6 +21,7 @@ public:
         ~TreeNode();
 
         int add(int value, Transaction* transaction, int *new_transactions);
+        int xrisi_avgi();
     };
 
 private:
@@ -34,6 +35,11 @@ public:
     Tree(char *bitcoinID, char *walletID, int value);
     ~Tree();
 
+    int getTotalTransaction();
+
     void addTransaction(int value, Transaction *transaction);
+
+    int xrisi_avgi();
+
 };
 

@@ -92,7 +92,7 @@ void wallet_parse(char *line, int bitcoin_value, HashTable *hashTable, StringLis
 }
 
 
-void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date){
+void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, HashTable *senders, HashTable *receivers, time_t *latest_date, BitcoinTreeList *btl){
 
     char id[15];
     char sender[50];
@@ -148,7 +148,7 @@ void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, Ha
     }
 
     /* Create the transaction */
-    create_transaction(id, sender, receiver, value, buf, trans, latest_date, all_wallets, senders, receivers);
+    create_transaction(id, sender, receiver, value, buf, trans, latest_date, all_wallets, senders, receivers, btl);
 
     /* Update the latest date */
     time_t next_date = string_to_time_t(buf);
@@ -158,7 +158,7 @@ void transaction_parse(char *line, StringList *trans, HashTable *all_wallets, Ha
 }
 
 
-void create_transaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date, StringList *transaction_ids, time_t *latest_date, HashTable *all_wallets, HashTable *senders, HashTable *receivers) {
+void create_transaction(char *transaction_id, char *sender_id, char *receiver_id, int value, char *date, StringList *transaction_ids, time_t *latest_date, HashTable *all_wallets, HashTable *senders, HashTable *receivers, BitcoinTreeList *btl) {
 
     // Elegxos an uparxei idi to transaction basei id
     if (transaction_ids->contains(transaction_id)) {
@@ -208,21 +208,21 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
         receiver = receivers->getWallet(receiver_id);
     }
 
-    // Kane metafora oson bitcoins xreiazetai
-    transfer_coins(sender, receiver, value);
-
-    // Ananeose ta balances sta wallets tou all_wallets hash table
-    all_sender->setBalance(all_sender->getBalance() - value);
-    all_receiver->setBalance(all_receiver->getBalance() + value);
+    // Bale to transaction id sti lista me ta "kammena" id
+    transaction_ids->add(transaction_id);
 
     // Ftiakse transaction gia ton sender
     sender->addTransaction(transaction_id, sender_id, receiver_id, value, date);
 
     // Ftiakse transaction gia ton receiver
-    receiver->addTransaction(transaction_id, sender_id, receiver_id, value, date);
+    Transaction *receiver_transaction = receiver->addTransaction(transaction_id, sender_id, receiver_id, value, date);
 
-    // Bale to transaction id sti lista me ta "kammena" id
-    transaction_ids->add(transaction_id);
+    // Kane metafora oson bitcoins xreiazetai
+    transfer_coins(sender, receiver, value, receiver_transaction, btl); // Sto dentro 8a mpei to transaction tou receiver
+
+    // Ananeose ta balances sta wallets tou all_wallets hash table
+    all_sender->setBalance(all_sender->getBalance() - value);
+    all_receiver->setBalance(all_receiver->getBalance() + value);
 
     // Antigrafi tou sender bitcoin-list sto all_wallets
     all_sender->copyBitcoin_list(sender->getBitcoin_list());
@@ -234,7 +234,7 @@ void create_transaction(char *transaction_id, char *sender_id, char *receiver_id
 
 }
 
-void transfer_coins(Wallet *sender, Wallet *receiver, int value) {
+void transfer_coins(Wallet *sender, Wallet *receiver, int value, Transaction *transaction, BitcoinTreeList *btl) {
 
     BitcoinList *sender_coins = sender->getBitcoin_list();
     BitcoinList::BitcoinNode *n = sender_coins->getHead();
@@ -256,6 +256,9 @@ void transfer_coins(Wallet *sender, Wallet *receiver, int value) {
 
             // Kane metafora tou bitcoinID kai tou denomination ston receiver: metaferei bitcoin, denomination kai enimeronei to balance tou receiver
             receiver->addBitcoin(n->bitcoin->getBitcoin_id(), n->bitcoin->getValue(), transfer);
+
+            // Enimerosi to bicoinTree
+            btl->addTransaction(n->bitcoin->getBitcoin_id(), transaction);
 
             // Enimerose to poso poy apomenei na metafer8ei
             value -= transfer;
@@ -639,4 +642,11 @@ void walletStatus(char *walletID, HashTable *all_wallets) {
         return;
     }
     cout<<"Wallet with id '"<<walletID<<"' has total balance: "<<wallet->getBalance()<<"$"<<endl;
+}
+
+void bitcoinStatus(char *bitcoinID, BitcoinTreeList *btl) {
+
+    int number_of_transaction = btl->getTransactions(bitcoinID);
+    int unspent = btl->xrisi_avgi(bitcoinID);
+    cout<<bitcoinID<<" "<<number_of_transaction<<" "<<unspent<<endl;
 }
