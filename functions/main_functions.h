@@ -6,7 +6,7 @@
 #include "../classes/Lists/StringList.h"
 #include "../classes/Lists/BitcoinTreeList.h"
 
-void init_arguments(int argc, char *argv[], char *bitcoins, char *transactions, int *bitcoin_value, int *sender_entries, int *receiver_entries, int *bucket_size);
+void init_arguments(int argc, char *argv[], char **bitcoins, char **transactions, int *bitcoin_value, int *sender_entries, int *receiver_entries, int *bucket_size);
 
 FILE* open_file(char *filename);
 

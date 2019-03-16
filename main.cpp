@@ -15,8 +15,8 @@ int main(int argc, char *argv[]) {
 //    char transactions[] = "transactionsFile.txt";
 
     char *bitcoins, *transactions;
-    int bitcoin_value = 100, sender_entries, receiver_entries;
-    init_arguments(argc, argv, bitcoins, transactions, &bitcoin_value, &sender_entries, &receiver_entries, &bucket_size);
+    int bitcoin_value, sender_entries, receiver_entries;
+    init_arguments(argc, argv, &bitcoins, &transactions, &bitcoin_value, &sender_entries, &receiver_entries, &bucket_size);
 
     HashTable *all_wallets = new HashTable(sender_entries);       // Ola ta wallets
     HashTable *sender_wallets = new HashTable(sender_entries);    // Ta wallets ton senders
@@ -48,6 +48,9 @@ int main(int argc, char *argv[]) {
     cout<<"Give Command: ";
     while ((fgets(command, 1024, stdin) != NULL) && cont == true) {
         cont = command_parser(command, trans, all_wallets, sender_wallets, receiver_wallets, &tt, btl);
+        if (cont == false) {
+            break;
+        }
         memset(command, 0, 1024);
         cout<<endl<<"Give Command: ";
     }
